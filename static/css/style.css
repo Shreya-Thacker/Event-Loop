@@ -1282,3 +1282,86 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cur
     .hcard-right    { align-items: flex-start; }
     .profile-tabs   { overflow-x: auto; }
 }
+
+/* ---------------------------------------------------------------------------
+   STAGE 6 - UI Polish & Micro-interactions
+   --------------------------------------------------------------------------- */
+
+/* -- Custom Scrollbar ------------------------------------------------------ */
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background: var(--dark-2);
+}
+::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--text-muted) 50%, transparent);
+    border-radius: 10px;
+    border: 2px solid var(--dark-2);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
+/* -- Glow Effects & Polish ------------------------------------------------- */
+.btn-hero-primary, .btn-submit, .btn-modal-delete {
+    position: relative;
+    overflow: hidden;
+}
+.btn-hero-primary::after, .btn-submit::after, .btn-modal-delete::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.5s ease-out;
+}
+.btn-hero-primary:hover::after, .btn-submit:hover::after, .btn-modal-delete:hover::after {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.event-card {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* 404 Error Page Styles */
+.error-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    padding: 2rem;
+}
+.error-code {
+    font-size: 8rem;
+    font-weight: 800;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+    animation: float 3s ease-in-out infinite;
+}
+.error-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+.error-desc {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 500px;
+    margin-bottom: 2rem;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
