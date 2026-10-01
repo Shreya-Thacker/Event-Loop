@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}EventLoop – Discover Events{% endblock %}
+
+{% block content %}
+
+<!-- ── Hero ──────────────────────────────────────────────────────────────── -->
+<section class="hero">
+    <div class="hero-badge">&#127880; Campus Event Platform</div>
+    <h1>Discover Events<br>Made for <span class="hero-highlight">You</span></h1>
+    <p>Find workshops, hackathons, sports meets, cultural shows and more — all in one place.</p>
+    <div class="hero-actions">
+        <a href="{{ url_for('events.list_events') }}" class="btn-hero-primary">Explore Events</a>
+        {% if not current_user.is_authenticated %}
+        <a href="{{ url_for('auth.register') }}" class="btn-hero-ghost">Join Free</a>
+        {% endif %}
+    </div>
+    <div class="hero-stats">
+        <div class="stat"><span class="stat-num">{{ featured|length }}+</span><span class="stat-lbl">Upcoming</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num">7</span><span class="stat-lbl">Categories</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num">100%</span><span class="stat-lbl">Free to join</span></div>
+    </div>
+</section>
+
+<!-- ── Category Quick-Links ───────────────────────────────────────────────── -->
+<section class="section">
+    <h2 class="section-title">Browse by Category</h2>
+    <div class="category-chips">
+        {% set cats = [
+            ('Workshop',  '&#128295;', '#a78bfa'),
+            ('Hackathon', '&#128187;', '#f472b6'),
+            ('Sports',    '&#127936;', '#34d399'),
+            ('Cultural',  '&#127928;', '#fb923c'),
+            ('Seminar',   '&#127891;', '#60a5fa'),
+            ('Tech Talk', '&#128161;', '#facc15'),
+            ('Social',    '&#127881;', '#f87171'),
+        ] %}
+        {% for name, icon, color in cats %}
+        <a href="{{ url_for('events.list_events', category=name) }}"
+           class="chip" style="--chip-color: {{ color }}">
+            <span>{{ icon | safe }}</span> {{ name }}
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- ── Featured Events ────────────────────────────────────────────────────── -->
+<section class="section">
+    <div class="section-header">
+        <h2 class="section-title">Upcoming Events</h2>
+        <a href="{{ url_for('events.list_events') }}" class="view-all">View all &rarr;</a>
+    </div>
+
+    {% if featured %}
+    <div class="events-grid">
+        {% for event in featured %}
+        {% include 'events/_card.html' %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">&#128197;</div>
+        <p>No upcoming events yet. Check back soon!</p>
+    </div>
+    {% endif %}
+</section>
+
+{% endblock %}

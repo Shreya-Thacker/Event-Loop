@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Login – EventLoop{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-logo">&#8635;</div>
+            <h1>Welcome back</h1>
+            <p>Log in to discover and join events</p>
+        </div>
+
+        <form id="loginForm" method="POST" action="{{ url_for('auth.login') }}" novalidate>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-input"
+                    placeholder="you@example.com"
+                    value="{{ email | default('') }}"
+                    required
+                    autocomplete="email"
+                />
+                <span class="field-error" id="emailError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-icon-wrap">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        class="form-input"
+                        placeholder="Your password"
+                        required
+                        autocomplete="current-password"
+                    />
+                    <button type="button" class="toggle-pw" id="togglePw" title="Show/hide password">&#128065;</button>
+                </div>
+                <span class="field-error" id="passwordError"></span>
+            </div>
+
+            <div class="form-check">
+                <input type="checkbox" id="remember" name="remember" />
+                <label for="remember">Remember me</label>
+            </div>
+
+            <button type="submit" class="btn-submit" id="loginBtn">Login</button>
+
+        </form>
+
+        <p class="auth-switch">
+            Don't have an account? <a href="{{ url_for('auth.register') }}">Sign up</a>
+        </p>
+    </div>
+
+</div>
+{% endblock %}

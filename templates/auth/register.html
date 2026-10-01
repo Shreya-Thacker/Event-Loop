@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Create Account – EventLoop{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-logo">&#8635;</div>
+            <h1>Join EventLoop</h1>
+            <p>Create an account to start discovering events</p>
+        </div>
+
+        <form id="registerForm" method="POST" action="{{ url_for('auth.register') }}" novalidate>
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    class="form-input"
+                    placeholder="e.g. shreya_2026"
+                    value="{{ username | default('') }}"
+                    required
+                    minlength="3"
+                    maxlength="80"
+                    autocomplete="username"
+                />
+                <span class="field-error" id="usernameError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-input"
+                    placeholder="you@example.com"
+                    value="{{ email | default('') }}"
+                    required
+                    autocomplete="email"
+                />
+                <span class="field-error" id="emailError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-icon-wrap">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        class="form-input"
+                        placeholder="At least 6 characters"
+                        required
+                        minlength="6"
+                        autocomplete="new-password"
+                    />
+                    <button type="button" class="toggle-pw" id="togglePw" title="Show/hide password">&#128065;</button>
+                </div>
+                <div class="strength-bar-wrap">
+                    <div class="strength-bar" id="strengthBar"></div>
+                </div>
+                <span class="strength-label" id="strengthLabel"></span>
+                <span class="field-error" id="passwordError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input
+                    type="password"
+                    id="confirm_password"
+                    name="confirm_password"
+                    class="form-input"
+                    placeholder="Repeat your password"
+                    required
+                    autocomplete="new-password"
+                />
+                <span class="field-error" id="confirmError"></span>
+            </div>
+
+            <button type="submit" class="btn-submit" id="registerBtn">Create Account</button>
+
+        </form>
+
+        <p class="auth-switch">
+            Already have an account? <a href="{{ url_for('auth.login') }}">Login</a>
+        </p>
+    </div>
+
+</div>
+{% endblock %}

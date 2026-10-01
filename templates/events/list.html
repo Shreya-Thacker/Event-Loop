@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Events – EventLoop{% endblock %}
+
+{% block content %}
+
+<!-- ── Page Header ────────────────────────────────────────────────────────── -->
+<div class="page-header">
+    <h1>Browse Events</h1>
+    <p>Discover upcoming events across all categories</p>
+</div>
+
+<!-- ── Search + Filter Bar ───────────────────────────────────────────────── -->
+<div class="filter-bar">
+    <form id="searchForm" method="GET" action="{{ url_for('events.list_events') }}" class="search-form">
+        <div class="search-wrap">
+            <span class="search-icon">&#128269;</span>
+            <input
+                type="text"
+                name="search"
+                id="searchInput"
+                class="search-input"
+                placeholder="Search events, locations…"
+                value="{{ search }}"
+                autocomplete="off"
+            />
+            {% if search %}
+            <button type="button" id="clearSearch" class="clear-search" title="Clear search">&#10005;</button>
+            {% endif %}
+        </div>
+        <input type="hidden" name="category" id="hiddenCategory" value="{{ active_category }}" />
+    </form>
+
+    <div class="category-filters">
+        <button
+            class="filter-btn {% if not active_category %}active{% endif %}"
+            data-category="">All</button>
+        {% for cat in categories %}
+        <button
+            class="filter-btn {% if active_category == cat %}active{% endif %}"
+            data-category="{{ cat }}">{{ cat }}</button>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- ── Results count ─────────────────────────────────────────────────────── -->
+<div class="results-meta">
+    <span>
+        {% if search %}
+            {{ events|length }} result{{ 's' if events|length != 1 }} for "<strong>{{ search }}</strong>"
+            {% if active_category %} in <strong>{{ active_category }}</strong>{% endif %}
+        {% elif active_category %}
+            {{ events|length }} event{{ 's' if events|length != 1 }} in <strong>{{ active_category }}</strong>
+        {% else %}
+            {{ events|length }} upcoming event{{ 's' if events|length != 1 }}
+        {% endif %}
+    </span>
+</div>
+
+<!-- ── Events Grid ────────────────────────────────────────────────────────── -->
+{% if events %}
+<div class="events-grid" id="eventsGrid">
+    {% for event in events %}
+    {% include 'events/_card.html' %}
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <div class="empty-icon">&#128269;</div>
+    <p>No events found. Try a different search or category.</p>
+    <a href="{{ url_for('events.list_events') }}" class="btn-hero-ghost" style="margin-top:1rem;">Clear filters</a>
+</div>
+{% endif %}
+
+{% endblock %}

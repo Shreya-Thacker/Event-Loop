@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}{{ event.title }} – EventLoop{% endblock %}
+{% block meta_description %}{{ event.description[:160] }}{% endblock %}
+
+{% block content %}
+
+{% set cat_colors = {
+    'Workshop':  '#a78bfa',
+    'Hackathon': '#f472b6',
+    'Sports':    '#34d399',
+    'Cultural':  '#fb923c',
+    'Seminar':   '#60a5fa',
+    'Tech Talk': '#facc15',
+    'Social':    '#f87171'
+} %}
+{% set cat_icons = {
+    'Workshop':  '&#128295;',
+    'Hackathon': '&#128187;',
+    'Sports':    '&#127936;',
+    'Cultural':  '&#127928;',
+    'Seminar':   '&#127891;',
+    'Tech Talk': '&#128161;',
+    'Social':    '&#127881;'
+} %}
+{% set color = cat_colors.get(event.category, '#6c63ff') %}
+
+<!-- ── Breadcrumb ─────────────────────────────────────────────────────────── -->
+<nav class="breadcrumb">
+    <a href="{{ url_for('index') }}">Home</a>
+    <span class="bc-sep">/</span>
+    <a href="{{ url_for('events.list_events') }}">Events</a>
+    <span class="bc-sep">/</span>
+    <span>{{ event.title }}</span>
+</nav>
+
+<!-- ── Event Hero ─────────────────────────────────────────────────────────── -->
+<div class="detail-hero" style="--cat-color: {{ color }}">
+    <div class="detail-hero-icon">{{ cat_icons.get(event.category, '&#127881;') | safe }}</div>
+    <div class="detail-hero-text">
+        <span class="detail-badge">{{ event.category }}</span>
+        <h1>{{ event.title }}</h1>
+        <div class="detail-meta">
+            <span>&#128197; {{ event.date.strftime('%A, %d %B %Y') }}</span>
+            <span>&#128336; {{ event.date.strftime('%I:%M %p') }}</span>
+            <span>&#128205; {{ event.location }}</span>
+            <span>&#128100; Organised by <strong>{{ event.organizer.username }}</strong></span>
+        </div>
+    </div>
+</div>
+
+<!-- ── Main Layout ───────────────────────────────────────────────────────── -->
+<div class="detail-layout">
+
+    <!-- Left: Description -->
+    <div class="detail-main">
+        <div class="detail-card">
+            <h2>About this Event</h2>
+            <p class="detail-description">{{ event.description }}</p>
+        </div>
+    </div>
+
+    <!-- Right: Info Sidebar -->
+    <aside class="detail-sidebar">
+
+        <div class="sidebar-card">
+            <h3>Event Details</h3>
+            <ul class="detail-info-list">
+                <li>
+                    <span class="info-label">&#128197; Date</span>
+                    <span>{{ event.date.strftime('%d %b %Y') }}</span>
+                </li>
+                <li>
+                    <span class="info-label">&#128336; Time</span>
+                    <span>{{ event.date.strftime('%I:%M %p') }}</span>
+                </li>
+                <li>
+                    <span class="info-label">&#128205; Location</span>
+                    <span>{{ event.location }}</span>
+                </li>
+                <li>
+                    <span class="info-label">&#127920; Category</span>
+                    <span>{{ event.category }}</span>
+                </li>
+                <li>
+                    <span class="info-label">&#128101; Capacity</span>
+                    <span>{{ event.capacity }} total</span>
+                </li>
+            </ul>
+
+            <!-- Spots progress bar -->
+            <div class="capacity-section">
+                <div class="capacity-label">
+                    <span>Spots available</span>
+                    <strong class="{% if event.spots_left <= 5 %}text-danger{% endif %}">
+                        {{ event.spots_left }} / {{ event.capacity }}
+                    </strong>
+                </div>
+                <div class="capacity-bar-wrap">
+                    {% set pct = ((event.capacity - event.spots_left) / event.capacity * 100) | int %}
+                    <div class="capacity-bar" style="width: {{ pct }}%; background: {{ color }}"></div>
+                </div>
+            </div>
+
+            <!-- Register button (Stage 5 will wire this up) -->
+            {% if event.is_full %}
+                <button class="btn-register btn-full" disabled>Event Full</button>
+            {% elif current_user.is_authenticated %}
+                <form method="POST" action="#">
+                    <button type="submit" class="btn-register" style="background: {{ color }}">
+                        Register Now
+                    </button>
+                </form>
+            {% else %}
+                <a href="{{ url_for('auth.login', next=request.path) }}" class="btn-register btn-login-prompt">
+                    Login to Register
+                </a>
+            {% endif %}
+
+            {% if current_user.is_authenticated %}
+            <button class="btn-save" id="saveBtn" title="Save event">
+                &#9825; Save Event
+            </button>
+            {% endif %}
+        </div>
+
+    </aside>
+</div>
+
+<!-- ── Related Events ─────────────────────────────────────────────────────── -->
+{% if related %}
+<section class="section" style="margin-top: 3rem;">
+    <h2 class="section-title">More {{ event.category }} Events</h2>
+    <div class="events-grid">
+        {% for event in related %}
+        {% include 'events/_card.html' %}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}
