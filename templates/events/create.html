@@ -1,6 +1,169 @@
 {% extends "base.html" %}
-{% block title %}Create Event – EventLoop{% endblock %}
+
+{% if event %}
+    {% block title %}Edit Event – EventLoop{% endblock %}
+{% else %}
+    {% block title %}Create Event – EventLoop{% endblock %}
+{% endif %}
+
 {% block content %}
-<!-- Create/Edit event form will be implemented in Stage 4 -->
-<h2>Create Event</h2>
+
+<!-- ── Breadcrumb ─────────────────────────────────────────────────────────── -->
+<nav class="breadcrumb">
+    <a href="{{ url_for('index') }}">Home</a>
+    <span class="bc-sep">/</span>
+    <a href="{{ url_for('events.list_events') }}">Events</a>
+    <span class="bc-sep">/</span>
+    {% if event %}
+        <a href="{{ url_for('events.event_detail', event_id=event.id) }}">{{ event.title }}</a>
+        <span class="bc-sep">/</span>
+        <span>Edit</span>
+    {% else %}
+        <span>Create Event</span>
+    {% endif %}
+</nav>
+
+<!-- ── Page Header ───────────────────────────────────────────────────────── -->
+<div class="page-header">
+    {% if event %}
+        <h1>&#9998; Edit Event</h1>
+        <p>Update the details for <strong>{{ event.title }}</strong></p>
+    {% else %}
+        <h1>&#127881; Create New Event</h1>
+        <p>Fill in the details below to list your event for everyone to discover</p>
+    {% endif %}
+</div>
+
+<!-- ── Form ──────────────────────────────────────────────────────────────── -->
+<div class="event-form-wrap">
+    <form id="eventForm"
+          method="POST"
+          action="{{ url_for('events.edit_event', event_id=event.id) if event else url_for('events.create_event') }}"
+          novalidate>
+
+        <!-- Row 1: Title -->
+        <div class="form-group">
+            <label for="title">Event Title <span class="req">*</span></label>
+            <input
+                type="text"
+                id="title"
+                name="title"
+                class="form-input"
+                placeholder="e.g. Python & Flask Bootcamp"
+                value="{{ form.get('title', event.title if event else '') }}"
+                maxlength="150"
+                required
+            />
+            <span class="field-error" id="titleError"></span>
+        </div>
+
+        <!-- Row 2: Description -->
+        <div class="form-group">
+            <label for="description">Description <span class="req">*</span></label>
+            <textarea
+                id="description"
+                name="description"
+                class="form-input form-textarea"
+                placeholder="Describe the event — what to expect, who should attend, what to bring…"
+                rows="5"
+                required
+            >{{ form.get('description', event.description if event else '') }}</textarea>
+            <div class="char-count-wrap">
+                <span class="field-error" id="descError"></span>
+                <span class="char-count" id="charCount">0 / 500</span>
+            </div>
+        </div>
+
+        <!-- Row 3: Category + Capacity -->
+        <div class="form-row">
+            <div class="form-group">
+                <label for="category">Category <span class="req">*</span></label>
+                <select id="category" name="category" class="form-input form-select" required>
+                    <option value="" disabled {% if not (form.get('category') or (event and event.category)) %}selected{% endif %}>
+                        Select a category…
+                    </option>
+                    {% set selected_cat = form.get('category', event.category if event else '') %}
+                    {% for cat in categories %}
+                    <option value="{{ cat }}" {% if selected_cat == cat %}selected{% endif %}>{{ cat }}</option>
+                    {% endfor %}
+                </select>
+                <span class="field-error" id="categoryError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="capacity">Capacity <span class="req">*</span></label>
+                <input
+                    type="number"
+                    id="capacity"
+                    name="capacity"
+                    class="form-input"
+                    placeholder="Max attendees"
+                    value="{{ form.get('capacity', event.capacity if event else '') }}"
+                    min="1"
+                    max="5000"
+                    required
+                />
+                <span class="field-error" id="capacityError"></span>
+            </div>
+        </div>
+
+        <!-- Row 4: Location -->
+        <div class="form-group">
+            <label for="location">Location <span class="req">*</span></label>
+            <input
+                type="text"
+                id="location"
+                name="location"
+                class="form-input"
+                placeholder="e.g. Computer Lab 3, Block A"
+                value="{{ form.get('location', event.location if event else '') }}"
+                maxlength="200"
+                required
+            />
+            <span class="field-error" id="locationError"></span>
+        </div>
+
+        <!-- Row 5: Date + Time -->
+        <div class="form-row">
+            <div class="form-group">
+                <label for="date">Event Date <span class="req">*</span></label>
+                <input
+                    type="date"
+                    id="date"
+                    name="date"
+                    class="form-input"
+                    value="{{ form.get('date', event.date.strftime('%Y-%m-%d') if event else '') }}"
+                    required
+                />
+                <span class="field-error" id="dateError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="time">Event Time <span class="req">*</span></label>
+                <input
+                    type="time"
+                    id="time"
+                    name="time"
+                    class="form-input"
+                    value="{{ form.get('time', event.date.strftime('%H:%M') if event else '10:00') }}"
+                    required
+                />
+                <span class="field-error" id="timeError"></span>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+            <a href="{{ url_for('events.event_detail', event_id=event.id) if event else url_for('events.list_events') }}"
+               class="btn-cancel">
+                Cancel
+            </a>
+            <button type="submit" class="btn-submit" id="submitBtn">
+                {% if event %}Save Changes{% else %}&#127881; Publish Event{% endif %}
+            </button>
+        </div>
+
+    </form>
+</div>
+
 {% endblock %}

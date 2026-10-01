@@ -16,6 +16,7 @@
             <li><a href="{{ url_for('index') }}">Home</a></li>
             <li><a href="{{ url_for('events.list_events') }}">Events</a></li>
             {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('events.create_event') }}" class="btn-nav btn-create">+ Create</a></li>
                 <li class="nav-user">Hello, <strong>{{ current_user.username }}</strong></li>
                 <li><a href="{{ url_for('auth.logout') }}" class="btn-nav btn-outline">Logout</a></li>
             {% else %}

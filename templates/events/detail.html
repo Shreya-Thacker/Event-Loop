@@ -121,6 +121,27 @@
                 &#9825; Save Event
             </button>
             {% endif %}
+
+            <!-- ── Creator-only actions ────────────────────────────── -->
+            {% if current_user.is_authenticated and current_user.id == event.created_by %}
+            <div class="creator-actions">
+                <div class="creator-label">&#128100; You organised this event</div>
+                <a href="{{ url_for('events.edit_event', event_id=event.id) }}"
+                   class="btn-edit">
+                    &#9998; Edit Event
+                </a>
+                <button type="button" class="btn-delete" id="deleteBtn"
+                        data-title="{{ event.title }}">
+                    &#128465; Delete Event
+                </button>
+
+                <!-- Hidden delete form — submitted by JS modal -->
+                <form id="deleteForm" method="POST"
+                      action="{{ url_for('events.delete_event', event_id=event.id) }}"
+                      style="display:none;">
+                </form>
+            </div>
+            {% endif %}
         </div>
 
     </aside>

@@ -183,4 +183,142 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ════════════════════════════════════════════════════════════════════════
+    // STAGE 4 – Create / Edit Event form
+    // ════════════════════════════════════════════════════════════════════════
+
+    // ── Set minimum date to today ─────────────────────────────────────────────
+    const dateInput = document.getElementById('date');
+    if (dateInput && !dateInput.value) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.min = today;
+    }
+
+    // ── Description character counter ─────────────────────────────────────────
+    const descTextarea = document.getElementById('description');
+    const charCount    = document.getElementById('charCount');
+    const MAX_DESC     = 500;
+
+    if (descTextarea && charCount) {
+        const update = () => {
+            const len = descTextarea.value.length;
+            charCount.textContent = `${len} / ${MAX_DESC}`;
+            charCount.style.color = len > MAX_DESC ? '#eb5757' : 'var(--text-muted)';
+        };
+        descTextarea.addEventListener('input', update);
+        update(); // run on page load (for edit pre-fill)
+    }
+
+    // ── Event form validation ─────────────────────────────────────────────────
+    const eventForm = document.getElementById('eventForm');
+    if (eventForm) {
+        eventForm.addEventListener('submit', (e) => {
+            let valid = true;
+            clearErrors();
+
+            const title    = document.getElementById('title');
+            const desc     = document.getElementById('description');
+            const category = document.getElementById('category');
+            const location = document.getElementById('location');
+            const date     = document.getElementById('date');
+            const time     = document.getElementById('time');
+            const capacity = document.getElementById('capacity');
+
+            if (!title || title.value.trim().length < 5) {
+                showError(title, 'titleError', 'Title must be at least 5 characters.');
+                valid = false;
+            }
+            if (!desc || desc.value.trim().length < 20) {
+                showError(desc, 'descError', 'Description must be at least 20 characters.');
+                valid = false;
+            }
+            if (!category || !category.value) {
+                showError(category, 'categoryError', 'Please select a category.');
+                valid = false;
+            }
+            if (!location || location.value.trim() === '') {
+                showError(location, 'locationError', 'Location is required.');
+                valid = false;
+            }
+            if (!date || !date.value) {
+                showError(date, 'dateError', 'Please select a date.');
+                valid = false;
+            } else {
+                const chosen = new Date(date.value);
+                const today  = new Date(); today.setHours(0,0,0,0);
+                if (chosen < today) {
+                    showError(date, 'dateError', 'Date must be today or in the future.');
+                    valid = false;
+                }
+            }
+            if (!time || !time.value) {
+                showError(time, 'timeError', 'Please select a time.');
+                valid = false;
+            }
+            if (!capacity || capacity.value === '') {
+                showError(capacity, 'capacityError', 'Capacity is required.');
+                valid = false;
+            } else if (parseInt(capacity.value) < 1 || parseInt(capacity.value) > 5000) {
+                showError(capacity, 'capacityError', 'Capacity must be between 1 and 5000.');
+                valid = false;
+            }
+
+            if (!valid) e.preventDefault();
+        });
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    // STAGE 4 – Delete confirmation modal
+    // ════════════════════════════════════════════════════════════════════════
+
+    const deleteBtn  = document.getElementById('deleteBtn');
+    const deleteForm = document.getElementById('deleteForm');
+
+    if (deleteBtn && deleteForm) {
+        deleteBtn.addEventListener('click', () => {
+            const title = deleteBtn.dataset.title || 'this event';
+            showDeleteModal(title);
+        });
+    }
+
+    function showDeleteModal(title) {
+        // Build modal markup
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        overlay.id = 'deleteModal';
+        overlay.innerHTML = `
+            <div class="modal-box" role="dialog" aria-modal="true">
+                <div class="modal-icon">&#128465;</div>
+                <h3>Delete Event?</h3>
+                <p>You are about to permanently delete<br>
+                   <strong>"${escapeHtml(title)}"</strong>.<br>
+                   This action cannot be undone.</p>
+                <div class="modal-actions">
+                    <button class="btn-modal-cancel" id="modalCancel">Keep Event</button>
+                    <button class="btn-modal-delete" id="modalConfirm">Yes, Delete</button>
+                </div>
+            </div>`;
+
+        document.body.appendChild(overlay);
+        document.getElementById('modalCancel').focus();
+
+        // Cancel
+        document.getElementById('modalCancel').addEventListener('click', () => overlay.remove());
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+
+        // Confirm → submit the hidden form
+        document.getElementById('modalConfirm').addEventListener('click', () => {
+            deleteForm.submit();
+        });
+
+        // Escape key closes modal
+        document.addEventListener('keydown', function onEsc(e) {
+            if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', onEsc); }
+        });
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
 });

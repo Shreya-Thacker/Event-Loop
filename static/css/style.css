@@ -895,3 +895,158 @@ a:hover { color: var(--primary-light); }
     .detail-hero h1 { font-size: 1.4rem; }
 }
 
+
+
+/* ---------------------------------------------------------------------------
+   STAGE 4 - Create / Edit / Delete Events
+   --------------------------------------------------------------------------- */
+
+/* -- Navbar: Create button ------------------------------------------------- */
+.btn-nav.btn-create {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff !important;
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    transition: all var(--transition);
+}
+.btn-nav.btn-create:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4);
+    color: #fff !important;
+}
+
+/* -- Event Form Wrapper ----------------------------------------------------- */
+.event-form-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2.5rem;
+    box-shadow: var(--shadow);
+}
+.req { color: var(--accent); font-size: 0.9rem; }
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+.form-textarea { resize: vertical; min-height: 130px; line-height: 1.6; }
+
+.char-count-wrap { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 0.25rem; }
+.char-count { font-size: 0.75rem; color: var(--text-muted); flex-shrink: 0; margin-left: 1rem; }
+
+.form-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a0a0b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+    cursor: pointer;
+}
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; }
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+.btn-cancel {
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    font-weight: 500;
+    transition: all var(--transition);
+}
+.btn-cancel:hover { border-color: var(--primary); color: var(--primary); }
+
+/* -- Creator Actions (Detail sidebar) -------------------------------------- */
+.creator-actions {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+.creator-label { font-size: 0.78rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.25rem; text-align: center; }
+
+.btn-edit {
+    display: block; width: 100%; padding: 0.7rem; text-align: center;
+    background: rgba(108,99,255,0.12); border: 1px solid rgba(108,99,255,0.35);
+    border-radius: 8px; color: var(--primary); font-size: 0.875rem; font-weight: 600;
+    transition: all var(--transition);
+}
+.btn-edit:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+.btn-delete {
+    display: block; width: 100%; padding: 0.7rem; text-align: center;
+    background: rgba(220,53,69,0.1); border: 1px solid rgba(220,53,69,0.3);
+    border-radius: 8px; color: #eb5757; font-size: 0.875rem; font-weight: 600;
+    cursor: pointer; font-family: inherit; transition: all var(--transition);
+}
+.btn-delete:hover { background: rgba(220,53,69,0.2); border-color: #eb5757; }
+
+/* -- Delete Confirmation Modal --------------------------------------------- */
+.modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(4px);
+    z-index: 500;
+    display: flex; align-items: center; justify-content: center;
+    animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-box {
+    background: #1e1e3a;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem; width: 90%; max-width: 420px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    animation: slideUp 0.25s ease;
+}
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+.modal-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+.modal-box h3 { font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+.modal-box p  { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6; }
+.modal-box p strong { color: #eb5757; }
+.modal-actions { display: flex; gap: 0.75rem; justify-content: center; }
+
+.btn-modal-cancel {
+    padding: 0.7rem 1.5rem; border: 1px solid var(--border); border-radius: 8px;
+    background: transparent; color: var(--text-muted); font-size: 0.9rem;
+    font-weight: 500; cursor: pointer; font-family: inherit; transition: all var(--transition);
+}
+.btn-modal-cancel:hover { border-color: var(--primary); color: var(--primary); }
+
+.btn-modal-delete {
+    padding: 0.7rem 1.5rem; border: none; border-radius: 8px;
+    background: linear-gradient(135deg, #dc3545, #b02a37);
+    color: #fff; font-size: 0.9rem; font-weight: 700;
+    cursor: pointer; font-family: inherit; transition: all var(--transition);
+}
+.btn-modal-delete:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(220,53,69,0.4); }
+
+/* -- Responsive (Stage 4) -------------------------------------------------- */
+@media (max-width: 640px) {
+    .form-row { grid-template-columns: 1fr; }
+    .event-form-wrap { padding: 1.5rem 1.25rem; }
+    .form-actions { flex-direction: column-reverse; }
+    .btn-cancel, .btn-submit { width: 100%; text-align: center; }
+}
