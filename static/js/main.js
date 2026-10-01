@@ -321,4 +321,26 @@ document.addEventListener('DOMContentLoaded', () => {
         return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
+    // ════════════════════════════════════════════════════════════════════════
+    // STAGE 5 – Profile tab switching
+    // ════════════════════════════════════════════════════════════════════════
+
+    const tabBtns   = document.querySelectorAll('.tab-btn');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const target = btn.dataset.tab;
+
+            // Update buttons
+            tabBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Update panels
+            tabPanels.forEach(p => p.classList.remove('active'));
+            const panel = document.getElementById(`tab-${target}`);
+            if (panel) panel.classList.add('active');
+        });
+    });
+
 });

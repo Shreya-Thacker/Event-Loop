@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from models import db, Event, Registration, SavedEvent
 from datetime import datetime
+from sqlalchemy import and_
 
 events_bp = Blueprint('events', __name__, url_prefix='/events')
 
@@ -44,7 +45,19 @@ def event_detail(event_id):
         Event.date >= datetime.utcnow()
     ).limit(3).all()
 
-    return render_template('events/detail.html', event=event, related=related)
+    is_registered = False
+    is_saved      = False
+    if current_user.is_authenticated:
+        is_registered = Registration.query.filter_by(
+            user_id=current_user.id, event_id=event_id).first() is not None
+        is_saved = SavedEvent.query.filter_by(
+            user_id=current_user.id, event_id=event_id).first() is not None
+
+    return render_template('events/detail.html',
+                           event=event,
+                           related=related,
+                           is_registered=is_registered,
+                           is_saved=is_saved)
 
 
 # ── Create Event ──────────────────────────────────────────────────────────────
@@ -187,3 +200,63 @@ def _validate_event_form(form):
 def _parse_datetime(date_str, time_str):
     """Combine separate date (YYYY-MM-DD) and time (HH:MM) strings into a datetime."""
     return datetime.strptime(f'{date_str} {time_str}', '%Y-%m-%d %H:%M')
+
+
+# ── Register for Event ────────────────────────────────────────────────────────
+@events_bp.route('/<int:event_id>/register', methods=['POST'])
+@login_required
+def register_event(event_id):
+    event = Event.query.get_or_404(event_id)
+
+    if event.date <= datetime.utcnow():
+        flash('This event has already passed.', 'danger')
+        return redirect(url_for('events.event_detail', event_id=event_id))
+
+    already = Registration.query.filter_by(
+        user_id=current_user.id, event_id=event_id).first()
+    if already:
+        flash('You are already registered for this event.', 'info')
+        return redirect(url_for('events.event_detail', event_id=event_id))
+
+    if event.is_full:
+        flash('Sorry, this event is now full.', 'danger')
+        return redirect(url_for('events.event_detail', event_id=event_id))
+
+    reg = Registration(user_id=current_user.id, event_id=event_id)
+    db.session.add(reg)
+    db.session.commit()
+    flash(f'You are registered for "{event.title}"!', 'success')
+    return redirect(url_for('events.event_detail', event_id=event_id))
+
+
+# ── Unregister from Event ─────────────────────────────────────────────────────
+@events_bp.route('/<int:event_id>/unregister', methods=['POST'])
+@login_required
+def unregister_event(event_id):
+    event = Event.query.get_or_404(event_id)
+    reg = Registration.query.filter_by(
+        user_id=current_user.id, event_id=event_id).first()
+    if reg:
+        db.session.delete(reg)
+        db.session.commit()
+        flash(f'You have unregistered from "{event.title}".', 'info')
+    return redirect(url_for('events.event_detail', event_id=event_id))
+
+
+# ── Save / Unsave Event (Toggle) ──────────────────────────────────────────────
+@events_bp.route('/<int:event_id>/save', methods=['POST'])
+@login_required
+def save_event(event_id):
+    event = Event.query.get_or_404(event_id)
+    existing = SavedEvent.query.filter_by(
+        user_id=current_user.id, event_id=event_id).first()
+    if existing:
+        db.session.delete(existing)
+        db.session.commit()
+        flash(f'"{event.title}" removed from saved events.', 'info')
+    else:
+        saved = SavedEvent(user_id=current_user.id, event_id=event_id)
+        db.session.add(saved)
+        db.session.commit()
+        flash(f'"{event.title}" added to your saved events!', 'success')
+    return redirect(url_for('events.event_detail', event_id=event_id))

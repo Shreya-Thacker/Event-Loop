@@ -22,9 +22,10 @@ def create_app():
     # ── Blueprints (registered here as they are built) ────────────────────────
     from routes.auth   import auth_bp
     from routes.events import events_bp
+    from routes.user   import user_bp
     app.register_blueprint(auth_bp)
     app.register_blueprint(events_bp)
-    # from routes.user import user_bp; app.register_blueprint(user_bp)
+    app.register_blueprint(user_bp)
 
     # ── Temporary placeholder routes ──────────────────────────────────────────
     @app.route('/')

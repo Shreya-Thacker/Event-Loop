@@ -17,7 +17,7 @@
             <li><a href="{{ url_for('events.list_events') }}">Events</a></li>
             {% if current_user.is_authenticated %}
                 <li><a href="{{ url_for('events.create_event') }}" class="btn-nav btn-create">+ Create</a></li>
-                <li class="nav-user">Hello, <strong>{{ current_user.username }}</strong></li>
+                <li><a href="{{ url_for('user.profile') }}" class="nav-profile">&#128100; {{ current_user.username }}</a></li>
                 <li><a href="{{ url_for('auth.logout') }}" class="btn-nav btn-outline">Logout</a></li>
             {% else %}
                 <li><a href="{{ url_for('auth.login') }}" class="btn-nav">Login</a></li>

@@ -1050,3 +1050,235 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cur
     .form-actions { flex-direction: column-reverse; }
     .btn-cancel, .btn-submit { width: 100%; text-align: center; }
 }
+
+
+/* =============================================================================
+   STAGE 5 - Registration, Save, User Profile
+   ============================================================================= */
+
+/* -- Navbar profile link ---------------------------------------------------- */
+.nav-profile {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text) !important;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    transition: all var(--transition);
+}
+.nav-profile:hover { border-color: var(--primary); color: var(--primary) !important; }
+
+/* -- Unregister button state on detail page --------------------------------- */
+.btn-register.btn-unregister {
+    background: rgba(40,167,69,0.15) !important;
+    border: 1px solid rgba(40,167,69,0.4) !important;
+    color: #6fcf97 !important;
+}
+.btn-register.btn-unregister:hover {
+    background: rgba(220,53,69,0.15) !important;
+    border-color: rgba(220,53,69,0.4) !important;
+    color: #eb5757 !important;
+}
+
+/* Save button active (saved) state */
+.btn-save.btn-saved {
+    border-color: var(--accent) !important;
+    color: var(--accent) !important;
+    background: rgba(255,101,132,0.1) !important;
+}
+
+/* -- Profile Header --------------------------------------------------------- */
+.profile-header {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 4px 20px rgba(108,99,255,0.4);
+}
+
+.profile-info { flex: 1; }
+.profile-info h1 { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.3rem; }
+.profile-email, .profile-joined { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+.profile-stats {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+}
+.pstat { display: flex; flex-direction: column; align-items: center; min-width: 52px; }
+.pstat-num { font-size: 1.4rem; font-weight: 700; color: var(--primary); }
+.pstat-lbl { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 0.1rem; }
+.pstat-div { width: 1px; height: 30px; background: var(--border); }
+
+/* -- Profile Tabs ----------------------------------------------------------- */
+.profile-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+}
+
+.tab-btn {
+    padding: 0.6rem 1.25rem;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--transition);
+    margin-bottom: -1px;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+
+.tab-count {
+    background: rgba(108,99,255,0.15);
+    color: var(--primary);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+}
+
+/* -- Tab Panels ------------------------------------------------------------ */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.sub-section-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+}
+
+/* -- History Card ----------------------------------------------------------- */
+.history-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.history-card {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    transition: border-color var(--transition), transform var(--transition);
+}
+.history-card:hover { border-color: var(--primary); transform: translateX(3px); }
+.history-card-past { opacity: 0.7; }
+.history-card-past:hover { opacity: 1; }
+
+.hcard-left { flex-shrink: 0; }
+
+.hcard-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(108,99,255,0.12);
+    border: 1px solid rgba(108,99,255,0.25);
+    border-radius: 8px;
+    padding: 0.4rem 0.65rem;
+    min-width: 44px;
+}
+.hcard-day { font-size: 1.2rem; font-weight: 800; color: var(--primary); line-height: 1; }
+.hcard-mon { font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; margin-top: 0.1rem; }
+
+.hcard-body { flex: 1; display: flex; flex-direction: column; gap: 0.3rem; }
+.hcard-title { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+.hcard-title:hover { color: var(--primary); }
+.hcard-meta { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.78rem; color: var(--text-muted); }
+
+.hcard-right {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.4rem;
+}
+.hcard-cat {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.05);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+}
+
+/* Status badges */
+.status-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    align-self: flex-start;
+}
+.badge-upcoming { background: rgba(40,167,69,0.15); color: #6fcf97; border: 1px solid rgba(40,167,69,0.3); }
+.badge-past     { background: rgba(160,160,184,0.1); color: var(--text-muted); border: 1px solid var(--border); }
+
+/* Small action buttons inside history cards */
+.btn-unregister-sm, .btn-unsave-sm {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--transition);
+}
+.btn-unregister-sm {
+    background: rgba(220,53,69,0.1);
+    border: 1px solid rgba(220,53,69,0.3);
+    color: #eb5757;
+}
+.btn-unregister-sm:hover { background: rgba(220,53,69,0.2); }
+
+.btn-unsave-sm {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+}
+.btn-unsave-sm:hover { border-color: var(--accent); color: var(--accent); }
+
+/* -- Responsive (Stage 5) -------------------------------------------------- */
+@media (max-width: 700px) {
+    .profile-header { flex-direction: column; align-items: flex-start; gap: 1.25rem; }
+    .profile-stats  { width: 100%; justify-content: space-around; }
+    .history-card   { flex-wrap: wrap; }
+    .hcard-right    { align-items: flex-start; }
+    .profile-tabs   { overflow-x: auto; }
+}
