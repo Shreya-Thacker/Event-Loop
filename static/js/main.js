@@ -343,4 +343,40 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // ════════════════════════════════════════════════════════════════════════
+    // NEW FEATURE – Not Interested (hide cards)
+    // ════════════════════════════════════════════════════════════════════════
+    const notInterestedBtns = document.querySelectorAll('.btn-not-interested');
+    
+    // Check local storage on load
+    const hiddenEvents = JSON.parse(localStorage.getItem('hiddenEvents') || '[]');
+    hiddenEvents.forEach(id => {
+        const card = document.getElementById(`event-card-${id}`);
+        if (card) {
+            card.style.display = 'none';
+        }
+    });
+
+    notInterestedBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const eventId = btn.getAttribute('data-id');
+            const card = document.getElementById(`event-card-${eventId}`);
+            
+            // Hide visually
+            if (card) {
+                card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.9)';
+                setTimeout(() => card.style.display = 'none', 300);
+            }
+            
+            // Save to local storage
+            if (!hiddenEvents.includes(eventId)) {
+                hiddenEvents.push(eventId);
+                localStorage.setItem('hiddenEvents', JSON.stringify(hiddenEvents));
+            }
+        });
+    });
+
 });

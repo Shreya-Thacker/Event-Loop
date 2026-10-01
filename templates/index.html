@@ -1,69 +1,95 @@
 {% extends "base.html" %}
-{% block title %}EventLoop – Discover Events{% endblock %}
+{% block title %}EventLoop – Interest-First Activity Discovery{% endblock %}
 
 {% block content %}
 
-<!-- ── Hero ──────────────────────────────────────────────────────────────── -->
-<section class="hero">
-    <div class="hero-badge">&#127880; Campus Event Platform</div>
-    <h1>Discover Events<br>Made for <span class="hero-highlight">You</span></h1>
-    <p>Find workshops, hackathons, sports meets, cultural shows and more — all in one place.</p>
-    <div class="hero-actions">
-        <a href="{{ url_for('events.list_events') }}" class="btn-hero-primary">Explore Events</a>
-        {% if not current_user.is_authenticated %}
-        <a href="{{ url_for('auth.register') }}" class="btn-hero-ghost">Join Free</a>
-        {% endif %}
-    </div>
-    <div class="hero-stats">
-        <div class="stat"><span class="stat-num">{{ featured|length }}+</span><span class="stat-lbl">Upcoming</span></div>
-        <div class="stat-divider"></div>
-        <div class="stat"><span class="stat-num">7</span><span class="stat-lbl">Categories</span></div>
-        <div class="stat-divider"></div>
-        <div class="stat"><span class="stat-num">100%</span><span class="stat-lbl">Free to join</span></div>
+{% if not user_interests %}
+<!-- ── Onboarding: What's your thing? ────────────────────────────────────── -->
+<section class="hero" style="padding-bottom: 2rem;">
+    <div class="hero-badge">&#127880; Interest-First Discovery</div>
+    <h1>What's your <span class="hero-highlight">thing?</span></h1>
+    <p>Choose a few interests and we'll show you activities worth checking out. We personalize your discovery so you only see what matters to you.</p>
+    
+    <form method="POST" action="{{ url_for('set_interests') }}" class="interest-form" style="margin-top: 2rem;">
+        <div class="category-chips" style="justify-content: center; max-width: 800px; margin: 0 auto; margin-bottom: 2rem;">
+            {% set cats = [
+                ('Workshop',  '&#128295;', '#a78bfa'),
+                ('Hackathon', '&#128187;', '#f472b6'),
+                ('Sports',    '&#127936;', '#34d399'),
+                ('Cultural',  '&#127928;', '#fb923c'),
+                ('Seminar',   '&#127891;', '#60a5fa'),
+                ('Tech Talk', '&#128161;', '#facc15'),
+                ('Social',    '&#127881;', '#f87171'),
+                ('Design',    '&#127912;', '#4ade80'),
+                ('AI & ML',   '&#129302;', '#60a5fa'),
+                ('Photography', '&#128248;', '#f472b6'),
+                ('Gaming',    '&#127918;', '#a78bfa')
+            ] %}
+            {% for name, icon, color in cats %}
+            <label class="chip interest-chip" style="--chip-color: {{ color }}; cursor: pointer;">
+                <input type="checkbox" name="interests" value="{{ name }}" style="display:none;" onchange="this.parentElement.classList.toggle('active')">
+                <span>{{ icon | safe }}</span> {{ name }}
+            </label>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn-hero-primary" id="saveInterestsBtn">Show My Matches</button>
+    </form>
+</section>
+{% else %}
+<!-- ── Your Interest Profile ──────────────────────────────────────────────── -->
+<section class="section" style="margin-top: 2rem; background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border);">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h3 style="font-size: 1.2rem; color: var(--text); margin-bottom: 0.5rem;">Your Interest Profile</h3>
+            <div class="category-chips">
+                {% for interest in user_interests %}
+                <span class="chip" style="background: rgba(108,99,255,0.15); border-color: rgba(108,99,255,0.3); color: #a78bfa; padding: 0.3rem 0.8rem; font-size: 0.8rem;">
+                    {{ interest }}
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+        <form method="POST" action="{{ url_for('set_interests') }}">
+            <!-- Empty form clears interests -->
+            <button type="submit" class="btn-nav btn-outline" style="font-size: 0.8rem;">Change Interests</button>
+        </form>
     </div>
 </section>
+{% endif %}
 
-<!-- ── Category Quick-Links ───────────────────────────────────────────────── -->
-<section class="section">
-    <h2 class="section-title">Browse by Category</h2>
-    <div class="category-chips">
-        {% set cats = [
-            ('Workshop',  '&#128295;', '#a78bfa'),
-            ('Hackathon', '&#128187;', '#f472b6'),
-            ('Sports',    '&#127936;', '#34d399'),
-            ('Cultural',  '&#127928;', '#fb923c'),
-            ('Seminar',   '&#127891;', '#60a5fa'),
-            ('Tech Talk', '&#128161;', '#facc15'),
-            ('Social',    '&#127881;', '#f87171'),
-        ] %}
-        {% for name, icon, color in cats %}
-        <a href="{{ url_for('events.list_events', category=name) }}"
-           class="chip" style="--chip-color: {{ color }}">
-            <span>{{ icon | safe }}</span> {{ name }}
-        </a>
-        {% endfor %}
-    </div>
-</section>
-
-<!-- ── Featured Events ────────────────────────────────────────────────────── -->
+<!-- ── Picked for You ─────────────────────────────────────────────────────── -->
 <section class="section">
     <div class="section-header">
-        <h2 class="section-title">Upcoming Events</h2>
-        <a href="{{ url_for('events.list_events') }}" class="view-all">View all &rarr;</a>
+        <h2 class="section-title">Picked for You</h2>
+        <a href="{{ url_for('events.list_events') }}" class="view-all">Browse all activities &rarr;</a>
     </div>
 
-    {% if featured %}
+    {% if picked %}
     <div class="events-grid">
-        {% for event in featured %}
+        {% for event in picked %}
         {% include 'events/_card.html' %}
         {% endfor %}
     </div>
     {% else %}
     <div class="empty-state">
-        <div class="empty-icon">&#128197;</div>
-        <p>No upcoming events yet. Check back soon!</p>
+        <div class="empty-icon">&#128269;</div>
+        <p>No perfect matches right now. Try expanding your interests!</p>
     </div>
     {% endif %}
 </section>
+
+<!-- ── Explore beyond your interests ─────────────────────────────────────── -->
+{% if explore %}
+<section class="section" style="margin-top: 4rem;">
+    <div class="section-header">
+        <h2 class="section-title">Explore beyond your interests</h2>
+    </div>
+    <div class="events-grid">
+        {% for event in explore %}
+        {% include 'events/_card.html' %}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
 
 {% endblock %}

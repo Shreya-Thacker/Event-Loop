@@ -30,11 +30,49 @@ def create_app():
     # ── Temporary placeholder routes ──────────────────────────────────────────
     @app.route('/')
     def index():
+        from flask import session
         from models import Event
-        featured = Event.query.filter(
-            Event.date >= datetime.utcnow()
-        ).order_by(Event.date.asc()).limit(6).all()
-        return render_template('index.html', featured=featured)
+        user_interests = session.get('interests', [])
+        
+        all_events = Event.query.filter(Event.date >= datetime.utcnow()).order_by(Event.date.asc()).all()
+        
+        # Calculate match for all events
+        for e in all_events:
+            # We add attributes dynamically for the template
+            e.match_score = 0
+            e.match_reasons = []
+            if user_interests:
+                if e.category in user_interests:
+                    e.match_score += 80
+                    e.match_reasons.append(f"Matches your interest in {e.category}")
+                
+                # Simple logic based on title/desc keywords if we wanted to expand
+                # For now, just category match + some base score for all
+                
+                if e.match_score == 0:
+                    e.match_score = 15 # base low score for non-matching
+                    e.match_reasons.append("Explore something new")
+                else:
+                    e.match_score = min(98, e.match_score + 10) # cap at 98% for realism
+                    
+        # Sort by match score descending, then date
+        all_events.sort(key=lambda x: (-getattr(x, 'match_score', 0), x.date))
+        
+        # Split into picked for you and explore beyond
+        picked = [e for e in all_events if getattr(e, 'match_score', 0) > 50][:6]
+        explore = [e for e in all_events if getattr(e, 'match_score', 0) <= 50][:4]
+        
+        if not user_interests:
+            picked = all_events[:6]
+            explore = []
+            
+        return render_template('index.html', picked=picked, explore=explore, user_interests=user_interests)
+
+    @app.route('/set_interests', methods=['POST'])
+    def set_interests():
+        from flask import session, request, redirect, url_for
+        session['interests'] = request.form.getlist('interests')
+        return redirect(url_for('index'))
 
     # Create all DB tables on first run
     with app.app_context():

@@ -38,12 +38,29 @@ def list_events():
 # ── Event Detail ──────────────────────────────────────────────────────────────
 @events_bp.route('/<int:event_id>')
 def event_detail(event_id):
+    from flask import session
     event = Event.query.get_or_404(event_id)
     related = Event.query.filter(
         Event.category == event.category,
         Event.id != event.id,
         Event.date >= datetime.utcnow()
     ).limit(3).all()
+
+    # Calculate match
+    user_interests = session.get('interests', [])
+    match_score = 0
+    match_reasons = []
+    
+    if user_interests:
+        if event.category in user_interests:
+            match_score += 80
+            match_reasons.append(f"Matches your interest in {event.category}")
+            
+        if match_score == 0:
+            match_score = 15
+            match_reasons.append("Explore something new")
+        else:
+            match_score = min(98, match_score + 10)
 
     is_registered = False
     is_saved      = False
@@ -57,7 +74,9 @@ def event_detail(event_id):
                            event=event,
                            related=related,
                            is_registered=is_registered,
-                           is_saved=is_saved)
+                           is_saved=is_saved,
+                           match_score=match_score,
+                           match_reasons=match_reasons)
 
 
 # ── Create Event ──────────────────────────────────────────────────────────────

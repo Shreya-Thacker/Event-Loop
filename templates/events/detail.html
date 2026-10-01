@@ -101,36 +101,53 @@
                 </div>
             </div>
 
-            <!-- Register / Unregister -->
+            <!-- ── Match Logic ─────────────────────────────────────────────────── -->
+            {% if match_score is defined %}
+            <div style="background: rgba(108,99,255,0.05); padding: 1.25rem; border-radius: 8px; border-left: 3px solid var(--primary); margin-bottom: 1.5rem;">
+                <div style="font-weight: 800; color: var(--primary); font-size: 1.4rem; margin-bottom: 0.5rem;">
+                    {{ match_score }}% MATCH
+                </div>
+                <div style="font-size: 0.9rem; color: var(--text-muted);">
+                    <strong style="color: var(--text); display: block; margin-bottom: 0.3rem;">Why you're seeing this:</strong>
+                    <ul style="padding-left: 1.2rem; list-style-type: none; margin-left: 0; padding-left: 0;">
+                        {% for reason in match_reasons %}
+                        <li style="margin-bottom: 0.2rem;">&#10003; {{ reason }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Save / Unsave toggle (Primary Action Now) -->
+            {% if current_user.is_authenticated %}
+            <form method="POST" action="{{ url_for('events.save_event', event_id=event.id) }}" style="margin-bottom: 0.75rem;">
+                <button type="submit" class="btn-save {% if is_saved %}btn-saved{% endif %}" style="width: 100%;">
+                    {% if is_saved %}&#9829; Saved{% else %}&#9825; Save Activity{% endif %}
+                </button>
+            </form>
+            {% endif %}
+
+            <!-- Register / Unregister (Demoted) -->
             {% if current_user.is_authenticated %}
                 {% if is_registered %}
                     <form method="POST" action="{{ url_for('events.unregister_event', event_id=event.id) }}">
-                        <button type="submit" class="btn-register btn-unregister">
+                        <button type="submit" class="btn-register btn-unregister" style="opacity: 0.8; font-size: 0.9rem;">
                             &#10003; Registered &mdash; Cancel
                         </button>
                     </form>
                 {% elif event.is_full %}
-                    <button class="btn-register btn-full" disabled>Event Full</button>
+                    <button class="btn-register btn-full" disabled style="opacity: 0.6; font-size: 0.9rem;">Event Full</button>
                 {% else %}
                     <form method="POST" action="{{ url_for('events.register_event', event_id=event.id) }}">
-                        <button type="submit" class="btn-register" style="background: {{ color }}">
-                            Register Now
+                        <button type="submit" class="btn-register" style="background: transparent; border: 1px solid var(--border); color: var(--text); font-size: 0.9rem;">
+                            Register for Activity
                         </button>
                     </form>
                 {% endif %}
             {% else %}
-                <a href="{{ url_for('auth.login', next=request.path) }}" class="btn-register btn-login-prompt">
-                    Login to Register
+                <a href="{{ url_for('auth.login', next=request.path) }}" class="btn-register btn-login-prompt" style="opacity: 0.8; font-size: 0.9rem;">
+                    Login to interact
                 </a>
-            {% endif %}
-
-            <!-- Save / Unsave toggle -->
-            {% if current_user.is_authenticated %}
-            <form method="POST" action="{{ url_for('events.save_event', event_id=event.id) }}">
-                <button type="submit" class="btn-save {% if is_saved %}btn-saved{% endif %}">
-                    {% if is_saved %}&#9829; Saved{% else %}&#9825; Save Event{% endif %}
-                </button>
-            </form>
             {% endif %}
 
             <!-- ── Creator-only actions ────────────────────────────── -->
