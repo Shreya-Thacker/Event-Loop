@@ -431,4 +431,48 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ════════════════════════════════════════════════════════════════════════
+    // NEW FEATURE – tsParticles Interactive Background
+    // ════════════════════════════════════════════════════════════════════════
+    if (document.getElementById('tsparticles') && window.tsParticles) {
+        tsParticles.load("tsparticles", {
+            fpsLimit: 60,
+            particles: {
+                number: { value: 50, density: { enable: true, value_area: 800 } },
+                color: { value: ["#6c63ff", "#ff6584", "#34d399"] },
+                shape: { type: "circle" },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                links: {
+                    enable: true,
+                    distance: 150,
+                    color: "#a0a0b8",
+                    opacity: 0.15,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 1.5,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    outModes: { default: "out" },
+                }
+            },
+            interactivity: {
+                detectsOn: "window",
+                events: {
+                    onHover: { enable: true, mode: "grab" },
+                    onClick: { enable: true, mode: "push" },
+                    resize: true
+                },
+                modes: {
+                    grab: { distance: 180, links: { opacity: 0.4 } },
+                    push: { quantity: 3 }
+                }
+            },
+            detectRetina: true
+        });
+    }
+
 });
