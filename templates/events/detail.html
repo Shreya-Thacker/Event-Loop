@@ -55,14 +55,18 @@
     <div class="detail-main">
         <div class="detail-card">
             <!-- Dynamic Cover Art -->
-            <div style="width: 100%; height: 280px; border-radius: 12px; margin-bottom: 2rem; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, color-mix(in srgb, {{ color }} 25%, #0d0f17), color-mix(in srgb, {{ color }} 5%, #151828)); border: 1px solid color-mix(in srgb, {{ color }} 20%, transparent); box-shadow: inset 0 0 80px rgba(0,0,0,0.4);">
-                <!-- Abstract glowing orbs -->
-                <div style="position: absolute; top: -30%; left: -10%; width: 300px; height: 300px; background: radial-gradient(circle, color-mix(in srgb, {{ color }} 40%, transparent) 0%, transparent 70%); border-radius: 50%; mix-blend-mode: screen; filter: blur(40px);"></div>
-                <div style="position: absolute; bottom: -40%; right: -10%; width: 400px; height: 400px; background: radial-gradient(circle, color-mix(in srgb, {{ color }} 25%, transparent) 0%, transparent 70%); border-radius: 50%; mix-blend-mode: screen; filter: blur(60px);"></div>
-                <!-- Large category icon -->
-                <span style="font-size: 8rem; line-height: 1; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.4)); transform: scale(1.2); z-index: 1;">
-                    {{ cat_icons.get(event.category, '&#127881;') | safe }}
-                </span>
+            <div style="width: 100%; height: 300px; border-radius: 12px; margin-bottom: 2rem; position: relative; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                <!-- Image Banner -->
+                <img src="{{ url_for('static', filename='images/default_banner.jpg') }}" alt="Event Banner" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.9;">
+                
+                <!-- Overlay gradient to blend with the app theme -->
+                <div style="position: absolute; inset: 0; background: linear-gradient(to top, #0d0f17 0%, transparent 40%);"></div>
+                
+                <!-- Floating Category Badge on the banner -->
+                <div style="position: absolute; bottom: 1rem; right: 1rem; background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2); padding: 0.4rem 1rem; border-radius: 999px; display: flex; align-items: center; gap: 0.5rem; color: #fff; font-size: 0.85rem; font-weight: 600;">
+                    <span style="font-size: 1.2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));">{{ cat_icons.get(event.category, '&#127881;') | safe }}</span>
+                    {{ event.category }}
+                </div>
             </div>
             
             <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text); margin-bottom: 1rem;">About this Event</h2>
