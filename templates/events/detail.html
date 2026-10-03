@@ -138,8 +138,12 @@
                 {% elif event.is_full %}
                     <button class="btn-register btn-full" disabled style="opacity: 0.6; font-size: 0.9rem;">Event Full</button>
                 {% else %}
-                    <form method="POST" action="{{ url_for('events.register_event', event_id=event.id) }}">
-                        <button type="submit" class="btn-register" style="background: transparent; border: 1px solid var(--border); color: var(--text); font-size: 0.9rem;">
+                    <form id="eventRegisterForm" method="POST" action="{{ url_for('events.register_event', event_id=event.id) }}">
+                        <button type="button" id="eventRegisterBtn" class="btn-register" 
+                                data-title="{{ event.title }}"
+                                data-date="{{ event.date.strftime('%d %b %Y') }}"
+                                data-time="{{ event.date.strftime('%I:%M %p') }}"
+                                style="background: transparent; border: 1px solid var(--border); color: var(--text); font-size: 0.9rem;">
                             Register for Activity
                         </button>
                     </form>

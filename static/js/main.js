@@ -379,4 +379,56 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // ════════════════════════════════════════════════════════════════════════
+    // STAGE 6 - Registration Confirmation Modal
+    // ════════════════════════════════════════════════════════════════════════
+    const eventRegisterBtn = document.getElementById('eventRegisterBtn');
+    const eventRegisterForm = document.getElementById('eventRegisterForm');
+
+    if (eventRegisterBtn && eventRegisterForm) {
+        eventRegisterBtn.addEventListener('click', () => {
+            const title = eventRegisterBtn.dataset.title;
+            const date = eventRegisterBtn.dataset.date;
+            const time = eventRegisterBtn.dataset.time;
+
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.id = 'registerModal';
+            overlay.innerHTML = `
+                <div class="modal-box" role="dialog" aria-modal="true" style="text-align: center;">
+                    <div class="modal-icon" style="color: var(--primary); background: rgba(108, 99, 255, 0.1); width: 64px; height: 64px; line-height: 64px; border-radius: 50%; font-size: 2rem; margin: 0 auto 1rem;">&#127915;</div>
+                    <h3>Confirm Registration</h3>
+                    <p style="margin-bottom: 1.5rem; color: var(--text);">Are you sure you want to register for<br>
+                       <strong style="color: var(--primary); font-size: 1.1rem;">"${escapeHtml(title)}"</strong>?<br>
+                       <span style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-top: 0.5rem;">&#128197; ${escapeHtml(date)} at ${escapeHtml(time)}</span></p>
+                    <div class="modal-actions" style="justify-content: center; gap: 1rem;">
+                        <button class="btn-modal-cancel" id="regModalCancel" style="flex: 1;">Cancel</button>
+                        <button class="btn-modal-delete" id="regModalConfirm" style="flex: 1; background: var(--primary); color: white; border: none;">Confirm & Register</button>
+                    </div>
+                </div>`;
+
+            document.body.appendChild(overlay);
+            document.getElementById('regModalCancel').focus();
+
+            document.getElementById('regModalCancel').addEventListener('click', () => overlay.remove());
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+
+            document.getElementById('regModalConfirm').addEventListener('click', (e) => {
+                const btn = e.target;
+                btn.innerHTML = 'Registering...';
+                btn.style.opacity = '0.7';
+                btn.disabled = true;
+                
+                // Add a small delay for animation effect before submitting
+                setTimeout(() => {
+                    eventRegisterForm.submit();
+                }, 600);
+            });
+
+            document.addEventListener('keydown', function onEsc(e) {
+                if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', onEsc); }
+            });
+        });
+    }
+
 });
