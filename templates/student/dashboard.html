@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+{% block title %}Student Admission Dashboard | Admission Portal{% endblock %}
+{% block meta_description %}Overview of your college admission application, document upload track, and registration profile.{% endblock %}
+
+{% block content %}
+<div class="dashboard-container" style="max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem 4rem;">
+
+    <!-- Welcome Hero Banner -->
+    <div style="background: linear-gradient(135deg, rgba(26, 26, 46, 0.85), rgba(44, 44, 84, 0.65)); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 18px; padding: 2.25rem; margin-bottom: 2rem; box-shadow: var(--shadow); position: relative; overflow: hidden;">
+        <div style="position: absolute; right: -20px; top: -20px; font-size: 10rem; opacity: 0.05; pointer-events: none;">&#127891;</div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; position: relative; z-index: 1;">
+            <div>
+                <span class="hero-badge" style="margin-bottom: 0.5rem; display: inline-block;">
+                    &#127891; Academic Year 2026-2027
+                </span>
+                <h1 style="font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem;">
+                    Welcome, {{ reg.full_name if reg and reg.full_name else current_user.username }}!
+                </h1>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">
+                    Student ID: <strong style="color: var(--primary); font-family: monospace;">{{ current_user.student_id }}</strong>
+                    {% if reg %} &bull; Application No: <strong style="color: #a78bfa; font-family: monospace;">{{ reg.application_no }}</strong>{% endif %}
+                </p>
+            </div>
+
+            <!-- Quick Action Links -->
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                <a href="{{ url_for('student.registration') }}" class="btn-nav btn-primary" style="padding: 0.7rem 1.25rem;">
+                    &#9998; Admission Form
+                </a>
+                <a href="{{ url_for('student.documents') }}" class="btn-nav btn-outline" style="padding: 0.7rem 1.25rem;">
+                    &#128194; Upload Documents
+                </a>
+                <a href="{{ url_for('student.edit_profile') }}" class="btn-nav" style="padding: 0.7rem 1.25rem; background: rgba(255,255,255,0.06); border: 1px solid var(--border);">
+                    &#128100; Edit Profile
+                </a>
+            </div>
+        </div>
+
+        <!-- Admission Completion Meter -->
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+                <span style="font-weight: 600; font-size: 0.95rem; color: #fff;">
+                    Admission Onboarding Progress
+                </span>
+                <span style="font-weight: 700; color: var(--primary); font-size: 1.1rem;">
+                    {{ progress_score }}%
+                </span>
+            </div>
+            <div style="width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden;">
+                <div style="width: {{ progress_score }}%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.5s ease;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4 Core Navigation Cards (Directly matching all parts of Mini Project) -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+        
+        <!-- Card 1: Sign-Up Completed -->
+        <div style="background: rgba(22, 33, 62, 0.7); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(40,167,69,0.15); color: #28a745; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+                    &#10003;
+                </div>
+                <span style="background: rgba(40,167,69,0.15); color: #75b798; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 12px;">Step 1 Completed</span>
+            </div>
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem;">Student Sign-up</h3>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">
+                Account created in Student Login Table.
+            </p>
+            <div style="font-size: 0.85rem; color: #a78bfa; font-weight: 600;">
+                &#10003; {{ current_user.email }}
+            </div>
+        </div>
+
+        <!-- Card 2: Student Registration Page -->
+        <a href="{{ url_for('student.registration') }}" style="text-decoration: none; color: inherit; background: rgba(22, 33, 62, 0.7); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; display: block;" onmouseover="this.style.borderColor='var(--primary)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.borderColor='var(--border)'; this.style.transform='none';">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(108,99,255,0.15); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+                    &#128221;
+                </div>
+                {% if reg and reg.registration_status == 'Submitted' %}
+                    <span style="background: rgba(40,167,69,0.15); color: #28a745; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 12px;">Submitted</span>
+                {% else %}
+                    <span style="background: rgba(255,193,7,0.15); color: #ffc107; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 12px;">Draft / Fill</span>
+                {% endif %}
+            </div>
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem;">Registration Page</h3>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">
+                Personal, academic, guardian details in Student Registration Table.
+            </p>
+            <div style="font-size: 0.85rem; color: var(--primary); font-weight: 600;">
+                Open Form &rarr;
+            </div>
+        </a>
+
+        <!-- Card 3: Upload Documents Page -->
+        <a href="{{ url_for('student.documents') }}" style="text-decoration: none; color: inherit; background: rgba(22, 33, 62, 0.7); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; display: block;" onmouseover="this.style.borderColor='var(--primary)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.borderColor='var(--border)'; this.style.transform='none';">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(255,101,132,0.15); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+                    &#128194;
+                </div>
+                <span style="background: rgba(108,99,255,0.15); color: #a78bfa; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 12px;">{{ documents|length }} Uploaded</span>
+            </div>
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem;">Upload Documents</h3>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">
+                Upload & manage files recorded in Document Track Table.
+            </p>
+            <div style="font-size: 0.85rem; color: var(--accent); font-weight: 600;">
+                Manage Files &rarr;
+            </div>
+        </a>
+
+        <!-- Card 4: Edit Current Profile Page -->
+        <a href="{{ url_for('student.edit_profile') }}" style="text-decoration: none; color: inherit; background: rgba(22, 33, 62, 0.7); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; display: block;" onmouseover="this.style.borderColor='var(--primary)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.borderColor='var(--border)'; this.style.transform='none';">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(23,162,184,0.15); color: var(--info); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+                    &#9998;
+                </div>
+                <span style="background: rgba(23,162,184,0.15); color: #6edff6; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 12px;">CRUD Update</span>
+            </div>
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem;">Edit Current Profile</h3>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">
+                Update contact, personal information and change password.
+            </p>
+            <div style="font-size: 0.85rem; color: var(--info); font-weight: 600;">
+                Edit Profile &rarr;
+            </div>
+        </a>
+
+    </div>
+
+    <!-- 2 Column Details: Admission Summary (Left) & Document Track Overview (Right) -->
+    <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 2rem;">
+        
+        <!-- Admission Record Summary -->
+        <div style="background: rgba(22, 33, 62, 0.75); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; box-shadow: var(--shadow);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem;">
+                <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>&#127891;</span> Admission Application Summary
+                </h2>
+                <button onclick="window.print()" style="padding: 0.4rem 0.85rem; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 0.85rem; cursor: pointer;">
+                    &#128424; Print Slip
+                </button>
+            </div>
+
+            {% if reg %}
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.9rem;">
+                <div>
+                    <span style="display: block; color: var(--text-muted); font-size: 0.8rem;">Full Name</span>
+                    <strong style="color: #fff;">{{ reg.full_name }}</strong>
+                </div>
+                <div>
+                    <span style="display: block; color: var(--text-muted); font-size: 0.8rem;">Course Enrolled</span>
+                    <strong style="color: #a78bfa;">{{ reg.course_enrolled or 'Not Selected' }}</strong>
+                </div>
+                <div>
+                    <span style="display: block; color: var(--text-muted); font-size: 0.8rem;">Application Number</span>
+                    <strong style="color: var(--primary); font-family: monospace;">{{ reg.application_no }}</strong>
+                </div>
+                <div>
+                    <span style="display: block; color: var(--text-muted); font-size: 0.8rem;">Admission Category</span>
+                    <strong style="color: #fff;">{{ reg.admission_category }}</strong>
+                </div>
+                <div>
+                    <span style="display: block; color: var(--text-muted); font-size: 0.8rem;">Date of Birth / Gender</span>
+                    <strong style="color: #fff;">{{ reg.dob.strftime('%d-%m-%Y') if reg.dob else 'N/A' }} / {{ reg.gender or 'N/A' }}</strong>
+                </div>
+                <div>
+                    <span style="display: block; color: var(--text-muted); font-size: 0.8rem;">Primary Contact</span>
+                    <strong style="color: #fff;">{{ reg.phone_number or 'N/A' }}</strong>
+                </div>
+                <div>
+                    <span style="display: block; color: var(--text-muted); font-size: 0.8rem;">10th (SSC) Marks</span>
+                    <strong style="color: #fff;">{{ reg.tenth_percentage }}% ({{ reg.tenth_board or 'GSEB' }})</strong>
+                </div>
+                <div>
+                    <span style="display: block; color: var(--text-muted); font-size: 0.8rem;">12th (HSC) Marks</span>
+                    <strong style="color: #fff;">{{ reg.twelfth_percentage }}% ({{ reg.twelfth_board or 'GHSEB' }})</strong>
+                </div>
+                <div style="grid-column: span 2;">
+                    <span style="display: block; color: var(--text-muted); font-size: 0.8rem;">Permanent Address</span>
+                    <span style="color: #fff;">{{ reg.permanent_address or 'N/A' }}, {{ reg.city or '' }} - {{ reg.pincode or '' }}</span>
+                </div>
+            </div>
+            {% else %}
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                No registration form filled yet. <a href="{{ url_for('student.registration') }}" style="color: var(--primary);">Complete it now &rarr;</a>
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- Document Track Overview -->
+        <div style="background: rgba(22, 33, 62, 0.75); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; box-shadow: var(--shadow);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem;">
+                <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>&#128203;</span> Tracked Documents
+                </h2>
+                <a href="{{ url_for('student.documents') }}" style="font-size: 0.85rem; color: var(--primary);">View All &rarr;</a>
+            </div>
+
+            {% if documents %}
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem;">
+                {% for doc in documents[:5] %}
+                <li style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px;">
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.85rem; color: #fff;">{{ doc.document_type }}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ doc.original_filename }} &bull; {{ doc.file_size_kb }} KB</div>
+                    </div>
+                    <a href="{{ url_for('student.view_document', doc_id=doc.id) }}" target="_blank" style="padding: 0.25rem 0.6rem; background: rgba(108,99,255,0.15); border: 1px solid rgba(108,99,255,0.3); border-radius: 6px; color: #a78bfa; font-size: 0.78rem; text-decoration: none;">
+                        View
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div style="text-align: center; padding: 2rem 1rem; color: var(--text-muted); font-size: 0.9rem;">
+                No documents uploaded yet.<br>
+                <a href="{{ url_for('student.documents') }}" class="btn-nav btn-primary" style="margin-top: 1rem; display: inline-block;">
+                    Upload First Document &rarr;
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

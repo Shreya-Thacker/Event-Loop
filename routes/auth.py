@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User
+from datetime import datetime
+from models import db, User, StudentLogin
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -28,9 +29,9 @@ def register():
             errors.append('Password must be at least 6 characters.')
         if password != confirm:
             errors.append('Passwords do not match.')
-        if User.query.filter_by(username=username).first():
+        if User.query.filter_by(username=username).first() or StudentLogin.query.filter_by(username=username).first():
             errors.append('Username already taken.')
-        if User.query.filter_by(email=email).first():
+        if User.query.filter_by(email=email).first() or StudentLogin.query.filter_by(email=email).first():
             errors.append('Email already registered.')
 
         if errors:
@@ -67,6 +68,20 @@ def login():
 
         user = User.query.filter_by(email=email).first()
 
+        # If not found in User, check StudentLogin
+        if not user:
+            student = StudentLogin.query.filter(
+                (StudentLogin.email == email) |
+                (StudentLogin.username == email) |
+                (StudentLogin.student_id == email)
+            ).first()
+            if student and check_password_hash(student.password_hash, password):
+                student.last_login = datetime.utcnow()
+                db.session.commit()
+                login_user(student, remember=remember)
+                flash(f'Welcome to the Student Admission Portal, {student.username}!', 'success')
+                return redirect(url_for('student.dashboard'))
+
         if not user or not check_password_hash(user.password_hash, password):
             flash('Invalid email or password.', 'danger')
             return render_template('auth/login.html', email=email)
@@ -79,6 +94,20 @@ def login():
         return redirect(next_page or url_for('index'))
 
     return render_template('auth/login.html')
+
+
+# ── Aliases for Student Admission Portal routes ───────────────────────────────
+@auth_bp.route('/student-signup')
+def student_signup_alias():
+    return redirect(url_for('student.signup'))
+
+@auth_bp.route('/student-login')
+def student_login_alias():
+    return redirect(url_for('student.login'))
+
+@auth_bp.route('/forgot-password')
+def forgot_password_alias():
+    return redirect(url_for('student.forgot_password'))
 
 
 # ── Logout ────────────────────────────────────────────────────────────────────

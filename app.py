@@ -1,7 +1,8 @@
 from flask import Flask, render_template
 from flask_login import LoginManager
 from config import Config
-from models import db, User
+from models import db, User, StudentLogin
+import os
 from datetime import datetime
 
 # ── App Factory ───────────────────────────────────────────────────────────────
@@ -9,23 +10,43 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
+    # Ensure upload folder exists
+    os.makedirs(app.config.get('UPLOAD_FOLDER', 'static/uploads/documents'), exist_ok=True)
+
     # Initialise extensions
     db.init_app(app)
     login_manager = LoginManager()
-    login_manager.login_view = 'auth.login'
+    login_manager.login_view = 'student.login'
     login_manager.init_app(app)
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        user_id_str = str(user_id)
+        if user_id_str.startswith('student_'):
+            sid = int(user_id_str.replace('student_', ''))
+            return StudentLogin.query.get(sid)
+        elif user_id_str.startswith('user_'):
+            uid = int(user_id_str.replace('user_', ''))
+            return User.query.get(uid)
+        else:
+            try:
+                num_id = int(user_id_str)
+                student = StudentLogin.query.get(num_id)
+                if student:
+                    return student
+                return User.query.get(num_id)
+            except (ValueError, TypeError):
+                return None
 
-    # ── Blueprints (registered here as they are built) ────────────────────────
-    from routes.auth   import auth_bp
-    from routes.events import events_bp
-    from routes.user   import user_bp
+    # ── Blueprints ────────────────────────────────────────────────────────────
+    from routes.auth    import auth_bp
+    from routes.events  import events_bp
+    from routes.user    import user_bp
+    from routes.student import student_bp
     app.register_blueprint(auth_bp)
     app.register_blueprint(events_bp)
     app.register_blueprint(user_bp)
+    app.register_blueprint(student_bp)
 
     # ── Temporary placeholder routes ──────────────────────────────────────────
     @app.route('/')

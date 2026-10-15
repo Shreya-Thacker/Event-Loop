@@ -3,9 +3,10 @@ seed.py – Populates the database with sample events for development.
 Run once: python seed.py
 """
 from app import create_app
-from models import db, User, Event
+from models import db, User, Event, StudentLogin, StudentRegistration, DocumentTrack
 from werkzeug.security import generate_password_hash
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
+import os
 
 app = create_app()
 
@@ -131,15 +132,16 @@ def seed():
         db.drop_all()
         db.create_all()
 
-        # Create a system/organiser user
+        # ── 1. Create system / event organiser admin user ──
         organiser = User(
             username='eventloop_admin',
             email='admin@eventloop.dev',
             password_hash=generate_password_hash('Admin@1234')
         )
         db.session.add(organiser)
-        db.session.flush()  # get organiser.id before commit
+        db.session.flush()
 
+        # ── 2. Seed Campus Events ──
         now = datetime.utcnow()
         for ev in SAMPLE_EVENTS:
             event = Event(
@@ -153,9 +155,183 @@ def seed():
             )
             db.session.add(event)
 
+        # ── 3. Seed Student Login Table (Requirement 1) ──
+        student1 = StudentLogin(
+            student_id='STU2026-0001',
+            username='shreya_student',
+            email='student@adit.edu',
+            password_hash=generate_password_hash('Student@1234'),
+            phone='9876543210',
+            created_at=now - timedelta(days=5),
+            last_login=now
+        )
+        student2 = StudentLogin(
+            student_id='STU2026-0002',
+            username='rohit_sharma',
+            email='rohit@adit.edu',
+            password_hash=generate_password_hash('Student@1234'),
+            phone='9876543211',
+            created_at=now - timedelta(days=3),
+            last_login=now - timedelta(days=1)
+        )
+        db.session.add_all([student1, student2])
+        db.session.flush()
+
+        # ── 4. Seed Student Registration Table (Requirement 2) ──
+        reg1 = StudentRegistration(
+            student_login_id=student1.id,
+            application_no='ADM2026-0101',
+            full_name='Shreya Thacker',
+            dob=date(2006, 5, 14),
+            gender='Female',
+            blood_group='B+',
+            nationality='Indian',
+            mother_tongue='Gujarati',
+            category='General',
+            phone_number='9876543210',
+            alternate_phone='9876500000',
+            email='student@adit.edu',
+            permanent_address='12, Shanti Niketan Society, Near Nana Bazar, V.V. Nagar',
+            city='Anand',
+            state='Gujarat',
+            pincode='388120',
+            father_name='Rajesh Thacker',
+            mother_name='Meena Thacker',
+            guardian_phone='9825000000',
+            guardian_occupation='Business Executive',
+            family_income='₹ 5 Lakhs - ₹ 8 Lakhs',
+            course_enrolled='B.Tech - Computer Engineering',
+            department='Computer Engineering',
+            academic_year='2026-2027',
+            admission_category='Merit / ACPC',
+            semester='1st Semester',
+            tenth_board='GSEB',
+            tenth_percentage=91.20,
+            tenth_passing_year=2024,
+            twelfth_board='GHSEB Science',
+            twelfth_percentage=88.50,
+            twelfth_passing_year=2026,
+            entrance_exam_name='GUJCET',
+            entrance_exam_roll='G2610892',
+            entrance_exam_score=96.40,
+            registration_status='Submitted',
+            submission_date=now - timedelta(days=2),
+            created_at=now - timedelta(days=5),
+            updated_at=now - timedelta(days=2)
+        )
+
+        reg2 = StudentRegistration(
+            student_login_id=student2.id,
+            application_no='ADM2026-0102',
+            full_name='Rohit Sharma',
+            dob=date(2006, 8, 22),
+            gender='Male',
+            blood_group='O+',
+            nationality='Indian',
+            mother_tongue='Gujarati',
+            category='General',
+            phone_number='9876543211',
+            email='rohit@adit.edu',
+            permanent_address='45, Sardar Patel Colony, Station Road',
+            city='Nadiad',
+            state='Gujarat',
+            pincode='387001',
+            father_name='Kishore Sharma',
+            mother_name='Geeta Sharma',
+            guardian_phone='9825111111',
+            guardian_occupation='Engineer',
+            family_income='Above ₹ 8 Lakhs',
+            course_enrolled='B.Tech - Information Technology',
+            department='Information Technology',
+            academic_year='2026-2027',
+            admission_category='Merit / ACPC',
+            semester='1st Semester',
+            tenth_board='CBSE',
+            tenth_percentage=89.00,
+            tenth_passing_year=2024,
+            twelfth_board='CBSE',
+            twelfth_percentage=86.40,
+            twelfth_passing_year=2026,
+            entrance_exam_name='JEE Main',
+            entrance_exam_roll='26031002',
+            entrance_exam_score=94.10,
+            registration_status='Draft',
+            created_at=now - timedelta(days=3),
+            updated_at=now - timedelta(days=1)
+        )
+        db.session.add_all([reg1, reg2])
+        db.session.flush()
+
+        # ── 5. Seed Document Track Table (Requirement 3) ──
+        upload_dir = app.config.get('UPLOAD_FOLDER', os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static', 'uploads', 'documents'))
+        os.makedirs(upload_dir, exist_ok=True)
+
+        sample_docs = [
+            {
+                'type': '10th Standard Marksheet',
+                'filename': '10th_marksheet_shreya.pdf',
+                'size': 245.5,
+                'status': 'Verified',
+                'remarks': 'ACPC Verified and Approved'
+            },
+            {
+                'type': '12th Standard Marksheet',
+                'filename': '12th_hsc_science_marksheet.pdf',
+                'size': 312.0,
+                'status': 'Verified',
+                'remarks': 'Attested copy verified'
+            },
+            {
+                'type': 'Entrance Exam Scorecard (GUJCET / JEE)',
+                'filename': 'gujcet_2026_scorecard.pdf',
+                'size': 188.4,
+                'status': 'Verified',
+                'remarks': 'Scorecard confirmed: 96.40 PR'
+            },
+            {
+                'type': 'Aadhaar Card / Photo ID Proof',
+                'filename': 'aadhaar_card_scan.pdf',
+                'size': 420.2,
+                'status': 'Uploaded',
+                'remarks': 'Government Identity Verified'
+            },
+            {
+                'type': 'Passport Size Photograph',
+                'filename': 'passport_photo.png',
+                'size': 95.8,
+                'status': 'Verified',
+                'remarks': 'Clear color passport photograph'
+            }
+        ]
+
+        for s_doc in sample_docs:
+            disk_filename = f"stu_{student1.id}_{s_doc['filename']}"
+            disk_path = os.path.join(upload_dir, disk_filename)
+            # Create a mock placeholder file if not already present
+            if not os.path.exists(disk_path):
+                with open(disk_path, 'wb') as f:
+                    f.write(f"Sample Student Document: {s_doc['type']} for {reg1.full_name}".encode('utf-8'))
+
+            doc_entry = DocumentTrack(
+                student_login_id=student1.id,
+                student_registration_id=reg1.id,
+                document_type=s_doc['type'],
+                original_filename=s_doc['filename'],
+                file_name=disk_filename,
+                file_path=f"uploads/documents/{disk_filename}",
+                file_size_kb=s_doc['size'],
+                mime_type='application/pdf' if disk_filename.endswith('.pdf') else 'image/png',
+                upload_status=s_doc['status'],
+                remarks=s_doc['remarks'],
+                uploaded_at=now - timedelta(days=1)
+            )
+            db.session.add(doc_entry)
+
         db.session.commit()
-        print(f"Seeded {len(SAMPLE_EVENTS)} events and 1 admin user.")
-        print("Admin login -> email: admin@eventloop.dev | password: Admin@1234")
+
+        print(f"Seeded {len(SAMPLE_EVENTS)} events, 1 admin, 2 student logins, 2 student registrations, and {len(sample_docs)} document tracks.")
+        print("Admin login    -> email: admin@eventloop.dev | password: Admin@1234")
+        print("Student login  -> email: student@adit.edu    | password: Student@1234")
 
 
 if __name__ == '__main__':

@@ -1,0 +1,408 @@
+{% extends "base.html" %}
+{% block title %}Student Registration Form | Newly Admitted Students{% endblock %}
+{% block meta_description %}Fill out the comprehensive admission and enrollment form for newly admitted students.{% endblock %}
+
+{% block content %}
+<div class="registration-container" style="max-width: 1050px; margin: 2rem auto; padding: 0 1.5rem 4rem;">
+    
+    <!-- Top Progress / Step Bar -->
+    <div style="background: rgba(26, 26, 46, 0.7); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem 2rem; margin-bottom: 2rem; box-shadow: var(--shadow);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <div>
+                <span class="hero-badge" style="margin-bottom: 0.5rem; display: inline-block;">&#127891; Admission Portal 2026-27</span>
+                <h1 style="font-size: 1.8rem; font-weight: 700; color: #fff; margin: 0.2rem 0;">Student Admission Registration</h1>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">
+                    Application No: <strong style="color: var(--primary); font-family: monospace; font-size: 1.05rem;">{{ reg.application_no }}</strong>
+                </p>
+            </div>
+            <div style="text-align: right;">
+                <span style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem;">Registration Status</span>
+                {% if reg.registration_status == 'Submitted' %}
+                    <span style="background: rgba(40, 167, 69, 0.2); color: #28a745; border: 1px solid rgba(40,167,69,0.4); padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem;">
+                        &#10003; Submitted
+                    </span>
+                {% elif reg.registration_status == 'Approved' or reg.registration_status == 'Verified' %}
+                    <span style="background: rgba(108, 99, 255, 0.2); color: #6c63ff; border: 1px solid rgba(108,99,255,0.4); padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem;">
+                        &#9733; Verified & Approved
+                    </span>
+                {% else %}
+                    <span style="background: rgba(255, 193, 7, 0.15); color: #ffc107; border: 1px solid rgba(255,193,7,0.4); padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem;">
+                        &#9998; Draft (In Progress)
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 4 Step Nav Strip -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem;">
+            <div style="background: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.3); padding: 0.75rem; border-radius: 8px; text-align: center;">
+                <div style="font-size: 0.8rem; color: #75b798; font-weight: 600;">STEP 1 &#10003;</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: #fff;">Student Sign-Up</div>
+            </div>
+            <div style="background: rgba(108, 99, 255, 0.25); border: 1px solid var(--primary); padding: 0.75rem; border-radius: 8px; text-align: center; box-shadow: 0 0 12px rgba(108,99,255,0.3);">
+                <div style="font-size: 0.8rem; color: #a78bfa; font-weight: 600;">STEP 2 (CURRENT)</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: #fff;">Registration Form</div>
+            </div>
+            <a href="{{ url_for('student.documents') }}" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 0.75rem; border-radius: 8px; text-align: center; text-decoration: none; transition: var(--transition);">
+                <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">STEP 3</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text);">Upload Documents &rarr;</div>
+            </a>
+            <a href="{{ url_for('student.dashboard') }}" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 0.75rem; border-radius: 8px; text-align: center; text-decoration: none; transition: var(--transition);">
+                <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">STEP 4</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text);">Admission Status</div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Form -->
+    <form method="POST" action="{{ url_for('student.registration') }}">
+        
+        <!-- SECTION 1: Academic & Admission Details -->
+        <div class="form-card" style="background: rgba(22, 33, 62, 0.75); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow);">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem;">
+                <span style="font-size: 1.5rem;">&#127891;</span>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff;">1. Academic & Admission Details</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Details of the program and department admitted into</p>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                <!-- Application No (read only) -->
+                <div>
+                    <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text-muted);">Application Number</label>
+                    <input type="text" value="{{ reg.application_no }}" readonly style="width: 100%; padding: 0.75rem 1rem; background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 8px; color: var(--primary); font-weight: 600; font-family: monospace;">
+                </div>
+
+                <!-- Course Enrolled -->
+                <div>
+                    <label for="course_enrolled" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Course / Degree Program <span style="color: var(--accent);">*</span></label>
+                    <select id="course_enrolled" name="course_enrolled" required style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                        <option value="" style="background: #1a1a2e;">-- Select Program --</option>
+                        {% set courses = [
+                            'B.Tech - Computer Engineering',
+                            'B.Tech - Information Technology',
+                            'B.Tech - Artificial Intelligence & Data Science',
+                            'B.Tech - Electronics & Communication',
+                            'B.Tech - Mechanical Engineering',
+                            'B.Tech - Civil Engineering',
+                            'B.Tech - Electrical Engineering',
+                            'MCA - Master of Computer Applications',
+                            'MBA - Master of Business Administration'
+                        ] %}
+                        {% for c in courses %}
+                            <option value="{{ c }}" {% if reg.course_enrolled == c %}selected{% endif %} style="background: #1a1a2e;">{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Department -->
+                <div>
+                    <label for="department" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Department</label>
+                    <input type="text" id="department" name="department" value="{{ reg.department or 'Computer Engineering' }}" placeholder="e.g. Computer Engineering" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                </div>
+
+                <!-- Academic Year -->
+                <div>
+                    <label for="academic_year" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Academic Year</label>
+                    <input type="text" id="academic_year" name="academic_year" value="{{ reg.academic_year or '2026-2027' }}" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                </div>
+
+                <!-- Admission Category / Quota -->
+                <div>
+                    <label for="admission_category" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Admission Quota / Category</label>
+                    <select id="admission_category" name="admission_category" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                        {% for cat in ['Merit / ACPC', 'Management Quota', 'NRI Quota', 'TFWS (Tuition Fee Waiver)', 'Sports Quota'] %}
+                            <option value="{{ cat }}" {% if reg.admission_category == cat %}selected{% endif %} style="background: #1a1a2e;">{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Semester -->
+                <div>
+                    <label for="semester" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Current Semester</label>
+                    <select id="semester" name="semester" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                        <option value="1st Semester" {% if reg.semester == '1st Semester' %}selected{% endif %} style="background: #1a1a2e;">1st Semester (Freshman)</option>
+                        <option value="3rd Semester (D2D)" {% if reg.semester == '3rd Semester (D2D)' %}selected{% endif %} style="background: #1a1a2e;">3rd Semester (Diploma to Degree Direct Entry)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: Personal Information -->
+        <div class="form-card" style="background: rgba(22, 33, 62, 0.75); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow);">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem;">
+                <span style="font-size: 1.5rem;">&#128100;</span>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff;">2. Personal Information</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Official student identification as per 10th/12th certificates</p>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                <!-- Full Name -->
+                <div style="grid-column: span 2;">
+                    <label for="full_name" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Full Legal Name <span style="color: var(--accent);">*</span></label>
+                    <input type="text" id="full_name" name="full_name" value="{{ reg.full_name or '' }}" required placeholder="First Middle Last Name" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                </div>
+
+                <!-- Date of Birth -->
+                <div>
+                    <label for="dob" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Date of Birth <span style="color: var(--accent);">*</span></label>
+                    <input type="date" id="dob" name="dob" value="{{ reg.dob.strftime('%Y-%m-%d') if reg.dob else '' }}" required style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                </div>
+
+                <!-- Gender -->
+                <div>
+                    <label for="gender" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Gender <span style="color: var(--accent);">*</span></label>
+                    <select id="gender" name="gender" required style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                        <option value="" style="background: #1a1a2e;">-- Select Gender --</option>
+                        <option value="Male" {% if reg.gender == 'Male' %}selected{% endif %} style="background: #1a1a2e;">Male</option>
+                        <option value="Female" {% if reg.gender == 'Female' %}selected{% endif %} style="background: #1a1a2e;">Female</option>
+                        <option value="Other" {% if reg.gender == 'Other' %}selected{% endif %} style="background: #1a1a2e;">Other</option>
+                    </select>
+                </div>
+
+                <!-- Blood Group -->
+                <div>
+                    <label for="blood_group" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Blood Group</label>
+                    <select id="blood_group" name="blood_group" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                        <option value="" style="background: #1a1a2e;">-- Select --</option>
+                        {% for bg in ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'] %}
+                            <option value="{{ bg }}" {% if reg.blood_group == bg %}selected{% endif %} style="background: #1a1a2e;">{{ bg }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Social Category -->
+                <div>
+                    <label for="category" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Social Category</label>
+                    <select id="category" name="category" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                        {% for sc in ['General', 'OBC / SEBC', 'SC', 'ST', 'EWS'] %}
+                            <option value="{{ sc }}" {% if reg.category == sc %}selected{% endif %} style="background: #1a1a2e;">{{ sc }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Nationality & Mother Tongue -->
+                <div>
+                    <label for="nationality" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Nationality</label>
+                    <input type="text" id="nationality" name="nationality" value="{{ reg.nationality or 'Indian' }}" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                </div>
+
+                <div>
+                    <label for="mother_tongue" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Mother Tongue</label>
+                    <input type="text" id="mother_tongue" name="mother_tongue" value="{{ reg.mother_tongue or 'Gujarati' }}" placeholder="e.g. Gujarati / Hindi / English" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: Contact & Address Information -->
+        <div class="form-card" style="background: rgba(22, 33, 62, 0.75); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow);">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem;">
+                <span style="font-size: 1.5rem;">&#128222;</span>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff;">3. Contact & Permanent Address</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Residential address for postal correspondence</p>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                <!-- Phone Number -->
+                <div>
+                    <label for="phone_number" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Primary Mobile Number <span style="color: var(--accent);">*</span></label>
+                    <input type="tel" id="phone_number" name="phone_number" value="{{ reg.phone_number or '' }}" required placeholder="10-digit mobile number" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                </div>
+
+                <!-- Alternate Phone -->
+                <div>
+                    <label for="alternate_phone" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Alternate Contact Number</label>
+                    <input type="tel" id="alternate_phone" name="alternate_phone" value="{{ reg.alternate_phone or '' }}" placeholder="Emergency / Alternate phone" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label for="email" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Registered Email</label>
+                    <input type="email" id="email" name="email" value="{{ reg.email or '' }}" readonly style="width: 100%; padding: 0.75rem 1rem; background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 8px; color: var(--text-muted);">
+                </div>
+
+                <!-- Permanent Street Address -->
+                <div style="grid-column: span 2;">
+                    <label for="permanent_address" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Permanent Residential Address <span style="color: var(--accent);">*</span></label>
+                    <textarea id="permanent_address" name="permanent_address" rows="3" required placeholder="House/Flat No, Society/Street, Landmark" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-family: inherit;">{{ reg.permanent_address or '' }}</textarea>
+                </div>
+
+                <!-- City -->
+                <div>
+                    <label for="city" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">City / Town <span style="color: var(--accent);">*</span></label>
+                    <input type="text" id="city" name="city" value="{{ reg.city or 'Anand' }}" required placeholder="e.g. Anand / Ahmedabad" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                </div>
+
+                <!-- State -->
+                <div>
+                    <label for="state" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">State <span style="color: var(--accent);">*</span></label>
+                    <input type="text" id="state" name="state" value="{{ reg.state or 'Gujarat' }}" required placeholder="e.g. Gujarat" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                </div>
+
+                <!-- PIN Code -->
+                <div>
+                    <label for="pincode" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">PIN Code <span style="color: var(--accent);">*</span></label>
+                    <input type="text" id="pincode" name="pincode" value="{{ reg.pincode or '388120' }}" required placeholder="6-digit PIN code" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: Parent / Guardian Details -->
+        <div class="form-card" style="background: rgba(22, 33, 62, 0.75); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow);">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem;">
+                <span style="font-size: 1.5rem;">&#128106;</span>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff;">4. Parent / Guardian Details</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Family background and emergency contact information</p>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                <!-- Father's Name -->
+                <div>
+                    <label for="father_name" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Father's / Guardian's Full Name</label>
+                    <input type="text" id="father_name" name="father_name" value="{{ reg.father_name or '' }}" placeholder="Father's Name" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                </div>
+
+                <!-- Mother's Name -->
+                <div>
+                    <label for="mother_name" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Mother's Full Name</label>
+                    <input type="text" id="mother_name" name="mother_name" value="{{ reg.mother_name or '' }}" placeholder="Mother's Name" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                </div>
+
+                <!-- Guardian Phone -->
+                <div>
+                    <label for="guardian_phone" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Parent / Guardian Mobile No</label>
+                    <input type="tel" id="guardian_phone" name="guardian_phone" value="{{ reg.guardian_phone or '' }}" placeholder="Guardian contact number" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                </div>
+
+                <!-- Guardian Occupation -->
+                <div>
+                    <label for="guardian_occupation" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Guardian Occupation</label>
+                    <input type="text" id="guardian_occupation" name="guardian_occupation" value="{{ reg.guardian_occupation or '' }}" placeholder="e.g. Business / Government / Private Service" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                </div>
+
+                <!-- Annual Income -->
+                <div>
+                    <label for="family_income" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Annual Family Income</label>
+                    <select id="family_income" name="family_income" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                        {% for inc in ['Below ₹ 2.5 Lakhs', '₹ 2.5 Lakhs - ₹ 5 Lakhs', '₹ 5 Lakhs - ₹ 8 Lakhs', 'Above ₹ 8 Lakhs'] %}
+                            <option value="{{ inc }}" {% if reg.family_income == inc %}selected{% endif %} style="background: #1a1a2e;">{{ inc }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: Prior Educational Records -->
+        <div class="form-card" style="background: rgba(22, 33, 62, 0.75); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow);">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem;">
+                <span style="font-size: 1.5rem;">&#128218;</span>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff;">5. Prior Educational Qualifications</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Academic records from 10th, 12th / Diploma, and Entrance Exams</p>
+                </div>
+            </div>
+
+            <!-- 10th Standard -->
+            <div style="background: rgba(255,255,255,0.02); padding: 1.25rem; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 1.25rem;">
+                <h3 style="font-size: 1rem; color: #a78bfa; margin-bottom: 0.85rem; font-weight: 600;">10th Standard (SSC)</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div>
+                        <label for="tenth_board" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Board Name</label>
+                        <input type="text" id="tenth_board" name="tenth_board" value="{{ reg.tenth_board or 'GSEB' }}" placeholder="e.g. GSEB / CBSE" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                    </div>
+                    <div>
+                        <label for="tenth_percentage" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Percentage Obtained (%)</label>
+                        <input type="number" step="0.01" min="0" max="100" id="tenth_percentage" name="tenth_percentage" value="{{ reg.tenth_percentage or '' }}" placeholder="e.g. 88.50" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                    </div>
+                    <div>
+                        <label for="tenth_passing_year" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Passing Year</label>
+                        <input type="number" id="tenth_passing_year" name="tenth_passing_year" value="{{ reg.tenth_passing_year or 2024 }}" placeholder="e.g. 2024" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 12th Standard -->
+            <div style="background: rgba(255,255,255,0.02); padding: 1.25rem; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 1.25rem;">
+                <h3 style="font-size: 1rem; color: #a78bfa; margin-bottom: 0.85rem; font-weight: 600;">12th Standard (HSC) / Diploma</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div>
+                        <label for="twelfth_board" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Board / University</label>
+                        <input type="text" id="twelfth_board" name="twelfth_board" value="{{ reg.twelfth_board or 'GHSEB Science' }}" placeholder="e.g. GHSEB / CBSE" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                    </div>
+                    <div>
+                        <label for="twelfth_percentage" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Percentage Obtained (%)</label>
+                        <input type="number" step="0.01" min="0" max="100" id="twelfth_percentage" name="twelfth_percentage" value="{{ reg.twelfth_percentage or '' }}" placeholder="e.g. 84.20" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                    </div>
+                    <div>
+                        <label for="twelfth_passing_year" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Passing Year</label>
+                        <input type="number" id="twelfth_passing_year" name="twelfth_passing_year" value="{{ reg.twelfth_passing_year or 2026 }}" placeholder="e.g. 2026" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Entrance Exam -->
+            <div style="background: rgba(255,255,255,0.02); padding: 1.25rem; border-radius: 10px; border: 1px solid var(--border);">
+                <h3 style="font-size: 1rem; color: #a78bfa; margin-bottom: 0.85rem; font-weight: 600;">Entrance Examination</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div>
+                        <label for="entrance_exam_name" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Exam Name</label>
+                        <select id="entrance_exam_name" name="entrance_exam_name" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                            {% for ex in ['GUJCET', 'JEE Main', 'CMAT / ACPC', 'Direct Merit'] %}
+                                <option value="{{ ex }}" {% if reg.entrance_exam_name == ex %}selected{% endif %} style="background: #1a1a2e;">{{ ex }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="entrance_exam_roll" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Exam Roll / Seat No</label>
+                        <input type="text" id="entrance_exam_roll" name="entrance_exam_roll" value="{{ reg.entrance_exam_roll or '' }}" placeholder="Roll / Application No" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                    </div>
+                    <div>
+                        <label for="entrance_exam_score" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Percentile / Marks</label>
+                        <input type="number" step="0.01" min="0" max="100" id="entrance_exam_score" name="entrance_exam_score" value="{{ reg.entrance_exam_score or '' }}" placeholder="e.g. 92.45" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 6: Declaration & Action Buttons -->
+        <div style="background: rgba(26, 26, 46, 0.8); border: 1px solid var(--border); border-radius: 14px; padding: 1.75rem; display: flex; flex-direction: column; gap: 1.25rem;">
+            <label style="display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; color: var(--text-muted); font-size: 0.9rem;">
+                <input type="checkbox" required style="accent-color: var(--primary); width: 18px; height: 18px; margin-top: 2px;">
+                <span>I hereby declare that all particulars stated in this application form are true, correct, and complete to the best of my knowledge and belief. I agree to abide by the rules and regulations of the institution.</span>
+            </label>
+
+            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <!-- Save Draft Button (CRUD Update / Draft) -->
+                <button
+                    type="submit"
+                    name="action"
+                    value="save_draft"
+                    id="saveDraftBtn"
+                    style="padding: 0.85rem 1.75rem; background: rgba(255,255,255,0.08); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-weight: 600; cursor: pointer; transition: var(--transition);"
+                >
+                    &#128190; Save as Draft
+                </button>
+
+                <!-- Final Submit Button (CRUD Update / Submit) -->
+                <button
+                    type="submit"
+                    name="action"
+                    value="submit_final"
+                    id="submitFinalBtn"
+                    style="padding: 0.85rem 2.25rem; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border: none; border-radius: 8px; color: #fff; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(108,99,255,0.4); display: flex; align-items: center; gap: 0.5rem;"
+                >
+                    <span>&#10003;</span> Submit & Proceed to Documents &rarr;
+                </button>
+            </div>
+        </div>
+
+    </form>
+</div>
+{% endblock %}

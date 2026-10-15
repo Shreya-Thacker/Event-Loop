@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block title %}Student Sign-Up | Admission Portal{% endblock %}
+{% block meta_description %}Register your student account for college admission and enrollment.{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper" style="padding: 3rem 1rem;">
+    <div class="auth-card" style="max-width: 560px; width: 100%; margin: 0 auto; background: rgba(22, 33, 62, 0.75); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 16px; padding: 2.5rem; box-shadow: 0 16px 40px rgba(0,0,0,0.5);">
+        
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; background: rgba(108, 99, 255, 0.15); border: 1px solid rgba(108, 99, 255, 0.3); border-radius: 50%; font-size: 1.8rem; margin-bottom: 0.8rem; color: var(--primary);">
+                &#127891;
+            </div>
+            <h1 style="font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 0.4rem;">Student Sign-Up</h1>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">
+                New Student Admission Portal &mdash; Step 1 of Admission
+            </p>
+        </div>
+
+        <form method="POST" action="{{ url_for('student.signup') }}" class="auth-form" novalidate>
+            <!-- Full Name -->
+            <div class="form-group" style="margin-bottom: 1.25rem;">
+                <label for="full_name" style="display: block; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text);">
+                    Full Legal Name <span style="color: var(--accent);">*</span>
+                </label>
+                <input
+                    type="text"
+                    id="full_name"
+                    name="full_name"
+                    value="{{ full_name or '' }}"
+                    class="form-control"
+                    placeholder="e.g. Shreya Thacker"
+                    required
+                    style="width: 100%; padding: 0.85rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 0.95rem; transition: var(--transition);"
+                />
+            </div>
+
+            <!-- Row: Student ID (optional) & Username -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div class="form-group">
+                    <label for="username" style="display: block; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text);">
+                        Student Username <span style="color: var(--accent);">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        value="{{ username or '' }}"
+                        class="form-control"
+                        placeholder="e.g. shreya26"
+                        required
+                        style="width: 100%; padding: 0.85rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 0.95rem;"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="student_id" style="display: block; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text);">
+                        Student ID <small style="color: var(--text-muted);">(Optional)</small>
+                    </label>
+                    <input
+                        type="text"
+                        id="student_id"
+                        name="student_id"
+                        value="{{ student_id or '' }}"
+                        class="form-control"
+                        placeholder="Auto-generated if empty"
+                        style="width: 100%; padding: 0.85rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 0.95rem;"
+                    />
+                </div>
+            </div>
+
+            <!-- Row: Email & Phone -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div class="form-group">
+                    <label for="email" style="display: block; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text);">
+                        Student Email <span style="color: var(--accent);">*</span>
+                    </label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value="{{ email or '' }}"
+                        class="form-control"
+                        placeholder="student@college.edu"
+                        required
+                        style="width: 100%; padding: 0.85rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 0.95rem;"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="phone" style="display: block; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text);">
+                        Phone Number <span style="color: var(--accent);">*</span>
+                    </label>
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value="{{ phone or '' }}"
+                        class="form-control"
+                        placeholder="e.g. 9876543210"
+                        required
+                        style="width: 100%; padding: 0.85rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 0.95rem;"
+                    />
+                </div>
+            </div>
+
+            <!-- Row: Password & Confirm Password -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.75rem;">
+                <div class="form-group">
+                    <label for="password" style="display: block; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text);">
+                        Password <span style="color: var(--accent);">*</span>
+                    </label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        class="form-control"
+                        placeholder="Min 6 characters"
+                        required
+                        style="width: 100%; padding: 0.85rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 0.95rem;"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password" style="display: block; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text);">
+                        Confirm Password <span style="color: var(--accent);">*</span>
+                    </label>
+                    <input
+                        type="password"
+                        id="confirm_password"
+                        name="confirm_password"
+                        class="form-control"
+                        placeholder="Repeat password"
+                        required
+                        style="width: 100%; padding: 0.85rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 0.95rem;"
+                    />
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button
+                type="submit"
+                id="studentSignupBtn"
+                class="btn-primary"
+                style="width: 100%; padding: 0.95rem; font-size: 1rem; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border: none; color: #fff; box-shadow: 0 4px 15px rgba(108,99,255,0.4);"
+            >
+                <span>&#10003;</span> Create Student Account
+            </button>
+        </form>
+
+        <!-- Footer Links -->
+        <div style="margin-top: 1.75rem; text-align: center; border-top: 1px solid var(--border); padding-top: 1.25rem;">
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                Already registered as a student?
+                <a href="{{ url_for('student.login') }}" style="color: var(--primary); font-weight: 600; text-decoration: underline;">
+                    Student Login &rarr;
+                </a>
+            </p>
+            <p style="font-size: 0.85rem;">
+                <a href="{{ url_for('student.forgot_password') }}" style="color: var(--text-muted);">
+                    Forgot your student password?
+                </a>
+            </p>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

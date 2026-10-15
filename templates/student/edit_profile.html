@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% block title %}Edit Student Profile | Admission Portal{% endblock %}
+{% block meta_description %}Manage and update your personal, contact, and account profile details.{% endblock %}
+
+{% block content %}
+<div class="profile-editor-container" style="max-width: 960px; margin: 2rem auto; padding: 0 1.5rem 4rem;">
+
+    <!-- Header -->
+    <div style="background: rgba(26, 26, 46, 0.7); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 16px; padding: 1.75rem 2rem; margin-bottom: 2rem; box-shadow: var(--shadow);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 1.25rem;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #fff; box-shadow: 0 4px 15px rgba(108,99,255,0.4);">
+                    &#128100;
+                </div>
+                <div>
+                    <h1 style="font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 0.2rem;">
+                        {{ reg.full_name if reg and reg.full_name else student.username }}
+                    </h1>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">
+                        Student ID: <strong style="color: var(--primary); font-family: monospace;">{{ student.student_id }}</strong>
+                        {% if reg %} &bull; App No: <span style="font-family: monospace; color: #a78bfa;">{{ reg.application_no }}</span>{% endif %}
+                    </p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <a href="{{ url_for('student.dashboard') }}" class="btn-nav btn-outline">
+                    Dashboard &rarr;
+                </a>
+                <a href="{{ url_for('student.registration') }}" class="btn-nav btn-outline">
+                    Admission Form
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2 Column Layout: Profile Form (Left) & Security/Password (Right) -->
+    <div style="display: grid; grid-template-columns: 2fr 1.2fr; gap: 2rem;">
+        
+        <!-- Left: Edit Personal & Contact Details (CRUD Update) -->
+        <div class="form-card" style="background: rgba(22, 33, 62, 0.75); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; box-shadow: var(--shadow);">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem;">
+                <span style="font-size: 1.5rem;">&#9998;</span>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff;">Edit Profile & Contact Info</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Updates Student Login & Student Registration database records</p>
+                </div>
+            </div>
+
+            <form method="POST" action="{{ url_for('student.edit_profile') }}">
+                <input type="hidden" name="action" value="update_profile">
+
+                <!-- Full Legal Name -->
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label for="full_name" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Full Legal Name</label>
+                    <input type="text" id="full_name" name="full_name" value="{{ reg.full_name if reg else '' }}" required style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                </div>
+
+                <!-- Username & Email -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                    <div>
+                        <label for="username" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Username</label>
+                        <input type="text" id="username" name="username" value="{{ student.username }}" required style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                    </div>
+                    <div>
+                        <label for="email" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Student Email</label>
+                        <input type="email" id="email" name="email" value="{{ student.email }}" required style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                    </div>
+                </div>
+
+                <!-- Phone & Alternate Phone -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                    <div>
+                        <label for="phone" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Mobile Phone</label>
+                        <input type="tel" id="phone" name="phone" value="{{ student.phone or (reg.phone_number if reg else '') }}" placeholder="10-digit number" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                    </div>
+                    <div>
+                        <label for="alternate_phone" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Alternate Phone</label>
+                        <input type="tel" id="alternate_phone" name="alternate_phone" value="{{ reg.alternate_phone if reg else '' }}" placeholder="Alternate phone" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                    </div>
+                </div>
+
+                <!-- Gender & Blood Group -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                    <div>
+                        <label for="gender" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Gender</label>
+                        <select id="gender" name="gender" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                            {% for g in ['Male', 'Female', 'Other'] %}
+                                <option value="{{ g }}" {% if reg and reg.gender == g %}selected{% endif %} style="background: #1a1a2e;">{{ g }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="blood_group" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Blood Group</label>
+                        <select id="blood_group" name="blood_group" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                            {% for bg in ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'] %}
+                                <option value="{{ bg }}" {% if reg and reg.blood_group == bg %}selected{% endif %} style="background: #1a1a2e;">{{ bg }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Permanent Address -->
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label for="permanent_address" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Permanent Address</label>
+                    <textarea id="permanent_address" name="permanent_address" rows="2" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-family: inherit;">{{ reg.permanent_address if reg else '' }}</textarea>
+                </div>
+
+                <!-- City, State, PIN -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <label for="city" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">City</label>
+                        <input type="text" id="city" name="city" value="{{ reg.city if reg else 'Anand' }}" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                    </div>
+                    <div>
+                        <label for="state" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">State</label>
+                        <input type="text" id="state" name="state" value="{{ reg.state if reg else 'Gujarat' }}" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                    </div>
+                    <div>
+                        <label for="pincode" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">PIN Code</label>
+                        <input type="text" id="pincode" name="pincode" value="{{ reg.pincode if reg else '388120' }}" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                    </div>
+                </div>
+
+                <!-- Guardian Information -->
+                <div style="border-top: 1px solid var(--border); padding-top: 1.25rem; margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 1rem; color: #a78bfa; margin-bottom: 1rem;">Parent / Guardian Information</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <label for="father_name" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Father's Name</label>
+                            <input type="text" id="father_name" name="father_name" value="{{ reg.father_name if reg else '' }}" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                        </div>
+                        <div>
+                            <label for="mother_name" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Mother's Name</label>
+                            <input type="text" id="mother_name" name="mother_name" value="{{ reg.mother_name if reg else '' }}" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label for="guardian_phone" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Guardian Contact</label>
+                            <input type="tel" id="guardian_phone" name="guardian_phone" value="{{ reg.guardian_phone if reg else '' }}" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                        </div>
+                        <div>
+                            <label for="family_income" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Family Income</label>
+                            <input type="text" id="family_income" name="family_income" value="{{ reg.family_income if reg else '' }}" placeholder="Annual Income" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                        </div>
+                    </div>
+                </div>
+
+                <button
+                    type="submit"
+                    id="saveProfileBtn"
+                    class="btn-primary"
+                    style="width: 100%; padding: 0.95rem; font-size: 1rem; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border: none; color: #fff; box-shadow: 0 4px 15px rgba(108,99,255,0.4);"
+                >
+                    <span>&#10003;</span> Save Profile Changes (CRUD Update)
+                </button>
+            </form>
+        </div>
+
+        <!-- Right: Change Password & Security Form -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            
+            <!-- Security Card -->
+            <div class="form-card" style="background: rgba(22, 33, 62, 0.75); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; box-shadow: var(--shadow);">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem;">
+                    <span style="font-size: 1.5rem;">&#128274;</span>
+                    <div>
+                        <h2 style="font-size: 1.15rem; font-weight: 700; color: #fff;">Change Password</h2>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Update student account authentication password</p>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ url_for('student.edit_profile') }}">
+                    <input type="hidden" name="action" value="change_password">
+
+                    <div class="form-group" style="margin-bottom: 1.1rem;">
+                        <label for="current_password" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Current Password <span style="color: var(--accent);">*</span></label>
+                        <input type="password" id="current_password" name="current_password" required placeholder="Enter current password" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 0.9rem;">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.1rem;">
+                        <label for="new_password" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">New Password <span style="color: var(--accent);">*</span></label>
+                        <input type="password" id="new_password" name="new_password" required placeholder="Min 6 characters" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 0.9rem;">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label for="confirm_new_password" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Confirm New Password <span style="color: var(--accent);">*</span></label>
+                        <input type="password" id="confirm_new_password" name="confirm_new_password" required placeholder="Repeat new password" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 0.9rem;">
+                    </div>
+
+                    <button
+                        type="submit"
+                        id="changePasswordBtn"
+                        style="width: 100%; padding: 0.85rem; font-size: 0.95rem; font-weight: 600; border-radius: 8px; cursor: pointer; background: rgba(255, 101, 132, 0.2); border: 1px solid var(--accent); color: #fff; transition: var(--transition);"
+                    >
+                        Update Password
+                    </button>
+                </form>
+            </div>
+
+            <!-- Quick Account Summary -->
+            <div style="background: rgba(26, 26, 46, 0.7); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem;">
+                <h3 style="font-size: 1rem; font-weight: 600; color: #fff; margin-bottom: 0.75rem;">Account Overview</h3>
+                <div style="font-size: 0.85rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.5rem;">
+                    <div>Registered: <span style="color: #fff;">{{ student.created_at.strftime('%d %B %Y') }}</span></div>
+                    <div>Last Login: <span style="color: #fff;">{{ student.last_login.strftime('%d %B %Y, %I:%M %p') if student.last_login else 'Active now' }}</span></div>
+                    <div>Admission Status: <span style="color: #a78bfa; font-weight: 600;">{{ reg.registration_status if reg else 'Draft' }}</span></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

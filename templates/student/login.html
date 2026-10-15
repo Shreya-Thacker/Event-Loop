@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Student Login | Admission Portal{% endblock %}
+{% block meta_description %}Login to your student admission portal to complete registration and track documents.{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper" style="padding: 3rem 1rem;">
+    <div class="auth-card" style="max-width: 480px; width: 100%; margin: 0 auto; background: rgba(22, 33, 62, 0.75); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 16px; padding: 2.5rem; box-shadow: 0 16px 40px rgba(0,0,0,0.5);">
+        
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; background: rgba(108, 99, 255, 0.15); border: 1px solid rgba(108, 99, 255, 0.3); border-radius: 50%; font-size: 1.8rem; margin-bottom: 0.8rem; color: var(--primary);">
+                &#128274;
+            </div>
+            <h1 style="font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 0.4rem;">Student Login</h1>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">
+                Admissions & Enrollment Portal
+            </p>
+        </div>
+
+        <form method="POST" action="{{ url_for('student.login') }}" class="auth-form" novalidate>
+            <!-- Identifier: Email, Username, or Student ID -->
+            <div class="form-group" style="margin-bottom: 1.25rem;">
+                <label for="identifier" style="display: block; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text);">
+                    Student ID / Email / Username <span style="color: var(--accent);">*</span>
+                </label>
+                <input
+                    type="text"
+                    id="identifier"
+                    name="identifier"
+                    value="{{ identifier or '' }}"
+                    class="form-control"
+                    placeholder="Enter Student ID, Email or Username"
+                    required
+                    style="width: 100%; padding: 0.85rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 0.95rem;"
+                />
+            </div>
+
+            <!-- Password -->
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <label for="password" style="font-weight: 500; font-size: 0.9rem; color: var(--text);">
+                        Password <span style="color: var(--accent);">*</span>
+                    </label>
+                    <a href="{{ url_for('student.forgot_password') }}" style="color: var(--primary); font-size: 0.85rem; text-decoration: underline;">
+                        Forgot Password?
+                    </a>
+                </div>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="form-control"
+                    placeholder="Enter your student password"
+                    required
+                    style="width: 100%; padding: 0.85rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 0.95rem;"
+                />
+            </div>
+
+            <!-- Remember Me -->
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.75rem;">
+                <input type="checkbox" id="remember" name="remember" style="accent-color: var(--primary); width: 16px; height: 16px;">
+                <label for="remember" style="font-size: 0.9rem; color: var(--text-muted); cursor: pointer;">Remember me on this browser</label>
+            </div>
+
+            <!-- Submit Button -->
+            <button
+                type="submit"
+                id="studentLoginBtn"
+                class="btn-primary"
+                style="width: 100%; padding: 0.95rem; font-size: 1rem; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border: none; color: #fff; box-shadow: 0 4px 15px rgba(108,99,255,0.4);"
+            >
+                <span>&#128273;</span> Sign In to Admission Portal
+            </button>
+        </form>
+
+        <!-- Demo credentials helper -->
+        <div style="margin-top: 1.5rem; padding: 0.85rem; background: rgba(108,99,255,0.08); border: 1px dashed rgba(108,99,255,0.3); border-radius: 8px; font-size: 0.82rem; color: var(--text-muted);">
+            <div style="font-weight: 600; color: #a78bfa; margin-bottom: 0.2rem;">&#128161; Demo Student Credentials:</div>
+            <div>Email: <strong style="color: #fff;">student@adit.edu</strong> | Password: <strong style="color: #fff;">Student@1234</strong></div>
+        </div>
+
+        <!-- Footer Links -->
+        <div style="margin-top: 1.75rem; text-align: center; border-top: 1px solid var(--border); padding-top: 1.25rem;">
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                Newly admitted student?
+                <a href="{{ url_for('student.signup') }}" style="color: var(--primary); font-weight: 600; text-decoration: underline;">
+                    Sign Up for Admission &rarr;
+                </a>
+            </p>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
