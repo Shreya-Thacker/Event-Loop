@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Student Registration Form | Newly Admitted Students{% endblock %}
-{% block meta_description %}Fill out the comprehensive admission and enrollment form for newly admitted students.{% endblock %}
+{% block title %}Student Campus Registration | EventLoop{% endblock %}
+{% block meta_description %}Complete your student profile and campus registration on EventLoop.{% endblock %}
 
 {% block content %}
 <div class="registration-container" style="max-width: 1050px; margin: 2rem auto; padding: 0 1.5rem 4rem;">
@@ -9,21 +9,17 @@
     <div style="background: rgba(26, 26, 46, 0.7); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem 2rem; margin-bottom: 2rem; box-shadow: var(--shadow);">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
             <div>
-                <span class="hero-badge" style="margin-bottom: 0.5rem; display: inline-block;">&#127891; Admission Portal 2026-27</span>
-                <h1 style="font-size: 1.8rem; font-weight: 700; color: #fff; margin: 0.2rem 0;">Student Admission Registration</h1>
+                <span class="hero-badge" style="margin-bottom: 0.5rem; display: inline-block;">&#127891; EventLoop Student Portal</span>
+                <h1 style="font-size: 1.8rem; font-weight: 700; color: #fff; margin: 0.2rem 0;">Student Campus & Event Registration</h1>
                 <p style="color: var(--text-muted); font-size: 0.95rem;">
-                    Application No: <strong style="color: var(--primary); font-family: monospace; font-size: 1.05rem;">{{ reg.application_no }}</strong>
+                    Registration ID: <strong style="color: var(--primary); font-family: monospace; font-size: 1.05rem;">{{ reg.application_no }}</strong>
                 </p>
             </div>
             <div style="text-align: right;">
                 <span style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem;">Registration Status</span>
-                {% if reg.registration_status == 'Submitted' %}
+                {% if reg.registration_status == 'Submitted' or reg.registration_status == 'Approved' or reg.registration_status == 'Verified' %}
                     <span style="background: rgba(40, 167, 69, 0.2); color: #28a745; border: 1px solid rgba(40,167,69,0.4); padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem;">
-                        &#10003; Submitted
-                    </span>
-                {% elif reg.registration_status == 'Approved' or reg.registration_status == 'Verified' %}
-                    <span style="background: rgba(108, 99, 255, 0.2); color: #6c63ff; border: 1px solid rgba(108,99,255,0.4); padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem;">
-                        &#9733; Verified & Approved
+                        &#10003; Active & Verified
                     </span>
                 {% else %}
                     <span style="background: rgba(255, 193, 7, 0.15); color: #ffc107; border: 1px solid rgba(255,193,7,0.4); padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem;">
@@ -41,15 +37,15 @@
             </div>
             <div style="background: rgba(108, 99, 255, 0.25); border: 1px solid var(--primary); padding: 0.75rem; border-radius: 8px; text-align: center; box-shadow: 0 0 12px rgba(108,99,255,0.3);">
                 <div style="font-size: 0.8rem; color: #a78bfa; font-weight: 600;">STEP 2 (CURRENT)</div>
-                <div style="font-size: 0.85rem; font-weight: 600; color: #fff;">Registration Form</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: #fff;">Campus Registration</div>
             </div>
             <a href="{{ url_for('student.documents') }}" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 0.75rem; border-radius: 8px; text-align: center; text-decoration: none; transition: var(--transition);">
                 <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">STEP 3</div>
-                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text);">Upload Documents &rarr;</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text);">Upload Student ID &rarr;</div>
             </a>
             <a href="{{ url_for('student.dashboard') }}" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 0.75rem; border-radius: 8px; text-align: center; text-decoration: none; transition: var(--transition);">
                 <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">STEP 4</div>
-                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text);">Admission Status</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text);">Student Hub &rarr;</div>
             </a>
         </div>
     </div>
@@ -57,21 +53,39 @@
     <!-- Main Form -->
     <form method="POST" action="{{ url_for('student.registration') }}">
         
-        <!-- SECTION 1: Academic & Admission Details -->
+        <!-- SECTION 1: Academic & College Details -->
         <div class="form-card" style="background: rgba(22, 33, 62, 0.75); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow);">
             <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem;">
                 <span style="font-size: 1.5rem;">&#127891;</span>
                 <div>
-                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff;">1. Academic & Admission Details</h2>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">Details of the program and department admitted into</p>
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff;">1. College & Academic Information</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Your affiliated college, branch, and student enrollment number</p>
                 </div>
             </div>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
-                <!-- Application No (read only) -->
+                <!-- College Name -->
                 <div>
-                    <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text-muted);">Application Number</label>
-                    <input type="text" value="{{ reg.application_no }}" readonly style="width: 100%; padding: 0.75rem 1rem; background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 8px; color: var(--primary); font-weight: 600; font-family: monospace;">
+                    <label for="college_name" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">College / Institute <span style="color: var(--accent);">*</span></label>
+                    <select id="college_name" name="college_name" required style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                        {% set colleges = [
+                            'ADIT - A.D. Patel Institute of Technology',
+                            'BVM - Birla Vishvakarma Mahavidyalaya',
+                            'GCET - G H Patel College of Engineering & Technology',
+                            'MBIT - Madhuben & Bhanubhai Patel Institute of Technology',
+                            'CVM University Campus',
+                            'Other Engineering / University College'
+                        ] %}
+                        {% for col in colleges %}
+                            <option value="{{ col }}" {% if reg.college_name == col %}selected{% endif %} style="background: #1a1a2e;">{{ col }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Enrollment / Roll No -->
+                <div>
+                    <label for="enrollment_no" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Student Enrollment / Roll No <span style="color: var(--accent);">*</span></label>
+                    <input type="text" id="enrollment_no" name="enrollment_no" value="{{ reg.enrollment_no or '' }}" placeholder="e.g. 230010116001" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
                 </div>
 
                 <!-- Course Enrolled -->
@@ -108,22 +122,15 @@
                     <input type="text" id="academic_year" name="academic_year" value="{{ reg.academic_year or '2026-2027' }}" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
                 </div>
 
-                <!-- Admission Category / Quota -->
-                <div>
-                    <label for="admission_category" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Admission Quota / Category</label>
-                    <select id="admission_category" name="admission_category" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
-                        {% for cat in ['Merit / ACPC', 'Management Quota', 'NRI Quota', 'TFWS (Tuition Fee Waiver)', 'Sports Quota'] %}
-                            <option value="{{ cat }}" {% if reg.admission_category == cat %}selected{% endif %} style="background: #1a1a2e;">{{ cat }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
                 <!-- Semester -->
                 <div>
                     <label for="semester" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Current Semester</label>
                     <select id="semester" name="semester" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
-                        <option value="1st Semester" {% if reg.semester == '1st Semester' %}selected{% endif %} style="background: #1a1a2e;">1st Semester (Freshman)</option>
-                        <option value="3rd Semester (D2D)" {% if reg.semester == '3rd Semester (D2D)' %}selected{% endif %} style="background: #1a1a2e;">3rd Semester (Diploma to Degree Direct Entry)</option>
+                        <option value="1st Semester" {% if reg.semester == '1st Semester' %}selected{% endif %} style="background: #1a1a2e;">1st Semester (Freshman / Newly Admitted)</option>
+                        <option value="2nd Semester" {% if reg.semester == '2nd Semester' %}selected{% endif %} style="background: #1a1a2e;">2nd Semester</option>
+                        <option value="3rd Semester (D2D)" {% if reg.semester == '3rd Semester (D2D)' %}selected{% endif %} style="background: #1a1a2e;">3rd Semester (Direct 2nd Year)</option>
+                        <option value="5th Semester" {% if reg.semester == '5th Semester' %}selected{% endif %} style="background: #1a1a2e;">5th Semester (3rd Year)</option>
+                        <option value="7th Semester" {% if reg.semester == '7th Semester' %}selected{% endif %} style="background: #1a1a2e;">7th Semester (Final Year)</option>
                     </select>
                 </div>
             </div>
@@ -197,13 +204,52 @@
             </div>
         </div>
 
-        <!-- SECTION 3: Contact & Address Information -->
+        <!-- SECTION 3: Event Interests & Activities (EventLoop Matching) -->
+        <div class="form-card" style="background: rgba(22, 33, 62, 0.75); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow);">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem;">
+                <span style="font-size: 1.5rem;">&#127880;</span>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff;">3. Event Interests & Campus Activities</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Personalize your event recommendations and campus pass privileges</p>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.6rem; color: var(--text);">Select Your Event Interests</label>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.6rem;">
+                    {% set interests_list = (reg.primary_interests or '').split(', ') %}
+                    {% for interest_opt in ['Hackathon', 'Workshop', 'Tech Talk', 'Sports', 'Cultural', 'Seminar', 'AI & ML', 'Social', 'Gaming', 'Design'] %}
+                    <label style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 20px; font-size: 0.85rem; color: #fff; cursor: pointer;">
+                        <input type="checkbox" name="interests" value="{{ interest_opt }}" {% if interest_opt in interests_list %}checked{% endif %} style="accent-color: var(--primary);">
+                        {{ interest_opt }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                <div>
+                    <label for="skills" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Student Skills & Specializations</label>
+                    <input type="text" id="skills" name="skills" value="{{ reg.skills or '' }}" placeholder="e.g. Python, Web Dev, UI/UX, Public Speaking, Robotics" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                </div>
+                <div>
+                    <label for="admission_category" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Student Category / Quota</label>
+                    <select id="admission_category" name="admission_category" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                        {% for cat in ['Merit / ACPC', 'College Club Member', 'Management Quota', 'Sports Quota', 'TFWS'] %}
+                            <option value="{{ cat }}" {% if reg.admission_category == cat %}selected{% endif %} style="background: #1a1a2e;">{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: Contact & Address Information -->
         <div class="form-card" style="background: rgba(22, 33, 62, 0.75); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow);">
             <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem;">
                 <span style="font-size: 1.5rem;">&#128222;</span>
                 <div>
-                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff;">3. Contact & Permanent Address</h2>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">Residential address for postal correspondence</p>
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff;">4. Contact & Permanent Address</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Residential address for correspondence</p>
                 </div>
             </div>
 
@@ -252,12 +298,12 @@
             </div>
         </div>
 
-        <!-- SECTION 4: Parent / Guardian Details -->
+        <!-- SECTION 5: Parent / Guardian Details -->
         <div class="form-card" style="background: rgba(22, 33, 62, 0.75); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow);">
             <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem;">
                 <span style="font-size: 1.5rem;">&#128106;</span>
                 <div>
-                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff;">4. Parent / Guardian Details</h2>
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff;">5. Parent / Guardian Details</h2>
                     <p style="font-size: 0.85rem; color: var(--text-muted);">Family background and emergency contact information</p>
                 </div>
             </div>
@@ -299,12 +345,12 @@
             </div>
         </div>
 
-        <!-- SECTION 5: Prior Educational Records -->
+        <!-- SECTION 6: Prior Educational Records -->
         <div class="form-card" style="background: rgba(22, 33, 62, 0.75); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow);">
             <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem;">
                 <span style="font-size: 1.5rem;">&#128218;</span>
                 <div>
-                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff;">5. Prior Educational Qualifications</h2>
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff;">6. Educational Records & Academic Background</h2>
                     <p style="font-size: 0.85rem; color: var(--text-muted);">Academic records from 10th, 12th / Diploma, and Entrance Exams</p>
                 </div>
             </div>

@@ -239,7 +239,7 @@ def require_student():
     return None
 
 
-# ── Student Admission Dashboard ─────────────────────────────────────────────
+# ── Student Event & Campus Hub Dashboard ─────────────────────────────────────
 @student_bp.route('/dashboard')
 @login_required
 def dashboard():
@@ -247,17 +247,34 @@ def dashboard():
     if guard:
         return guard
 
+    from models import Event, Registration, SavedEvent
     registration = StudentRegistration.query.filter_by(student_login_id=current_user.id).first()
     documents = DocumentTrack.query.filter_by(student_login_id=current_user.id).order_by(DocumentTrack.uploaded_at.desc()).all()
 
-    # Calculate admission completion score
+    # Get student event registrations & saved events
+    event_regs = (
+        Registration.query
+        .filter_by(user_id=current_user.id)
+        .join(Registration.event)
+        .order_by(Event.date.asc())
+        .all()
+    )
+    saved_events = (
+        SavedEvent.query
+        .filter_by(user_id=current_user.id)
+        .join(SavedEvent.event)
+        .order_by(Event.date.asc())
+        .all()
+    )
+
+    # Calculate profile & verification completion score
     progress_score = 25  # Account created
-    if registration and registration.registration_status in ['Submitted', 'Approved', 'Verified']:
+    if registration and registration.registration_status in ['Submitted', 'Approved', 'Verified', 'Active']:
         progress_score += 45
-    elif registration and registration.full_name and registration.dob:
+    elif registration and registration.full_name and registration.college_name:
         progress_score += 25
 
-    if len(documents) >= 3:
+    if len(documents) >= 2:
         progress_score += 30
     elif len(documents) > 0:
         progress_score += 15
@@ -268,6 +285,8 @@ def dashboard():
         'student/dashboard.html',
         registration=registration,
         documents=documents,
+        event_regs=event_regs,
+        saved_events=saved_events,
         progress_score=progress_score
     )
 
@@ -283,13 +302,14 @@ def registration():
     # CRUD Read: Fetch existing registration or instantiate one
     reg = StudentRegistration.query.filter_by(student_login_id=current_user.id).first()
     if not reg:
-        app_no = f"ADM{datetime.utcnow().year}-{current_user.id:04d}"
+        app_no = f"REG{datetime.utcnow().year}-{current_user.id:04d}"
         reg = StudentRegistration(
             student_login_id=current_user.id,
             application_no=app_no,
             full_name=current_user.username.replace('_', ' ').title(),
             email=current_user.email,
             phone_number=current_user.phone or '',
+            college_name='ADIT - A.D. Patel Institute of Technology',
             registration_status='Draft'
         )
         db.session.add(reg)
@@ -297,6 +317,23 @@ def registration():
 
     if request.method == 'POST':
         action = request.form.get('action', 'save_draft')
+
+        # College & Campus details
+        reg.college_name = request.form.get('college_name', '').strip() or reg.college_name
+        reg.enrollment_no = request.form.get('enrollment_no', '').strip()
+        reg.course_enrolled = request.form.get('course_enrolled', '').strip()
+        reg.department = request.form.get('department', '').strip()
+        reg.academic_year = request.form.get('academic_year', '2026-2027').strip()
+        reg.semester = request.form.get('semester', '1st Semester').strip()
+        reg.admission_category = request.form.get('admission_category', 'Merit').strip()
+
+        # Interests & Skills
+        interests_list = request.form.getlist('interests')
+        if interests_list:
+            reg.primary_interests = ', '.join(interests_list)
+        else:
+            reg.primary_interests = request.form.get('primary_interests', '').strip()
+        reg.skills = request.form.get('skills', '').strip()
 
         # Personal details
         reg.full_name = request.form.get('full_name', '').strip() or reg.full_name
@@ -328,13 +365,6 @@ def registration():
         reg.guardian_occupation = request.form.get('guardian_occupation', '').strip()
         reg.family_income = request.form.get('family_income', '').strip()
 
-        # Academic / Admission details
-        reg.course_enrolled = request.form.get('course_enrolled', '').strip()
-        reg.department = request.form.get('department', '').strip()
-        reg.academic_year = request.form.get('academic_year', '2026-2027').strip()
-        reg.admission_category = request.form.get('admission_category', 'Merit').strip()
-        reg.semester = request.form.get('semester', '1st Semester').strip()
-
         # Previous qualifications
         reg.tenth_board = request.form.get('tenth_board', '').strip()
         tenth_pct = request.form.get('tenth_percentage', '').strip()
@@ -357,21 +387,22 @@ def registration():
 
         # Handle Submit vs Draft
         if action == 'submit_final':
-            # Validation check for submission
             if not reg.full_name or not reg.course_enrolled or not reg.phone_number:
-                flash('Please fill in Full Name, Phone Number, and Admitted Course before submitting.', 'warning')
+                flash('Please fill in Full Name, Phone Number, and Degree/Branch before submitting.', 'warning')
                 return render_template('student/registration.html', reg=reg)
 
             reg.registration_status = 'Submitted'
             reg.submission_date = datetime.utcnow()
             db.session.commit()
-            flash('Registration form submitted successfully! Now please upload your admission documents.', 'success')
+            flash('Student campus registration completed! Next step: Upload your Student ID card or verification document.', 'success')
             return redirect(url_for('student.documents'))
         else:
             reg.registration_status = 'Draft'
             db.session.commit()
             flash('Registration draft saved successfully! You can resume editing anytime.', 'info')
             return redirect(url_for('student.registration'))
+
+    return render_template('student/registration.html', reg=reg)
 
     return render_template('student/registration.html', reg=reg)
 
@@ -443,15 +474,14 @@ def documents():
     # CRUD Read: List of documents uploaded by the student
     docs = DocumentTrack.query.filter_by(student_login_id=current_user.id).order_by(DocumentTrack.uploaded_at.desc()).all()
     
-    # Required documents checklist
+    # Required documents checklist for campus event eligibility & verification
     STANDARD_DOCS = [
-        '10th Standard Marksheet',
-        '12th Standard Marksheet',
-        'Entrance Exam Scorecard (GUJCET / JEE)',
-        'School Leaving Certificate / Transfer Certificate',
-        'Aadhaar Card / Photo ID Proof',
-        'Passport Size Photograph',
-        'Signature Specimen'
+        'College Student ID Card (Campus Pass Verification)',
+        'Event Achievement / Participation Certificate',
+        'College Permission Letter / Bonafide / NOC',
+        'Workshop / Hackathon Registration Receipt',
+        'Government Identity Proof (Aadhaar / ID)',
+        'Student Profile Photograph'
     ]
     uploaded_types = {d.document_type for d in docs}
 
@@ -583,6 +613,12 @@ def edit_profile():
             email = request.form.get('email', '').strip().lower()
             phone = request.form.get('phone', '').strip()
             alternate_phone = request.form.get('alternate_phone', '').strip()
+            college_name = request.form.get('college_name', '').strip()
+            enrollment_no = request.form.get('enrollment_no', '').strip()
+            course_enrolled = request.form.get('course_enrolled', '').strip()
+            department = request.form.get('department', '').strip()
+            primary_interests = request.form.get('primary_interests', '').strip()
+            skills = request.form.get('skills', '').strip()
             permanent_address = request.form.get('permanent_address', '').strip()
             city = request.form.get('city', '').strip()
             state = request.form.get('state', '').strip()
@@ -617,6 +653,18 @@ def edit_profile():
                 reg.email = student.email
                 reg.phone_number = phone
                 reg.alternate_phone = alternate_phone
+                if college_name:
+                    reg.college_name = college_name
+                if enrollment_no:
+                    reg.enrollment_no = enrollment_no
+                if course_enrolled:
+                    reg.course_enrolled = course_enrolled
+                if department:
+                    reg.department = department
+                if primary_interests:
+                    reg.primary_interests = primary_interests
+                if skills:
+                    reg.skills = skills
                 reg.permanent_address = permanent_address
                 reg.city = city
                 reg.state = state

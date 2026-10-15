@@ -11,16 +11,16 @@
 
     <!-- ── Navbar ── -->
     <nav class="navbar">
-        <a class="nav-brand" href="{{ url_for('index') }}">&#8635; CampusHub &bull; EventLoop</a>
+        <a class="nav-brand" href="{{ url_for('index') }}">&#8635; EventLoop</a>
         <ul class="nav-links">
             <li><a href="{{ url_for('index') }}">Home</a></li>
             <li><a href="{{ url_for('events.list_events') }}">Events</a></li>
 
             {% if current_user.is_authenticated and current_user.is_student %}
                 <!-- Student Portal Navigation -->
-                <li><a href="{{ url_for('student.dashboard') }}" style="color: #a78bfa; font-weight: 600;">&#127891; Admission Hub</a></li>
+                <li><a href="{{ url_for('student.dashboard') }}" style="color: #a78bfa; font-weight: 600;">&#127891; Student Hub</a></li>
                 <li><a href="{{ url_for('student.registration') }}">&#128221; Registration</a></li>
-                <li><a href="{{ url_for('student.documents') }}">&#128194; Documents</a></li>
+                <li><a href="{{ url_for('student.documents') }}">&#128194; Document Track</a></li>
                 <li><a href="{{ url_for('student.edit_profile') }}" class="nav-profile">&#128100; {{ current_user.username }}</a></li>
                 <li><a href="{{ url_for('student.logout') }}" class="btn-nav btn-outline">Logout</a></li>
             {% elif current_user.is_authenticated %}

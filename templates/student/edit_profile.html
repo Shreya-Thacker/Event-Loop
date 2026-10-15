@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Edit Student Profile | Admission Portal{% endblock %}
-{% block meta_description %}Manage and update your personal, contact, and account profile details.{% endblock %}
+{% block title %}Edit Student Profile | EventLoop{% endblock %}
+{% block meta_description %}Manage and update your academic details, event interests, and student profile.{% endblock %}
 
 {% block content %}
 <div class="profile-editor-container" style="max-width: 960px; margin: 2rem auto; padding: 0 1.5rem 4rem;">
@@ -18,16 +18,17 @@
                     </h1>
                     <p style="color: var(--text-muted); font-size: 0.9rem;">
                         Student ID: <strong style="color: var(--primary); font-family: monospace;">{{ student.student_id }}</strong>
+                        {% if reg and reg.enrollment_no %} &bull; Enrollment: <span style="font-family: monospace; color: #34d399;">{{ reg.enrollment_no }}</span>{% endif %}
                         {% if reg %} &bull; App No: <span style="font-family: monospace; color: #a78bfa;">{{ reg.application_no }}</span>{% endif %}
                     </p>
                 </div>
             </div>
             <div style="display: flex; gap: 0.5rem;">
                 <a href="{{ url_for('student.dashboard') }}" class="btn-nav btn-outline">
-                    Dashboard &rarr;
+                    Student Hub &rarr;
                 </a>
                 <a href="{{ url_for('student.registration') }}" class="btn-nav btn-outline">
-                    Admission Form
+                    Campus Form
                 </a>
             </div>
         </div>
@@ -64,6 +65,50 @@
                     <div>
                         <label for="email" style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--text);">Student Email</label>
                         <input type="email" id="email" name="email" value="{{ student.email }}" required style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                    </div>
+                </div>
+
+                <!-- Academic & Event Verification Details -->
+                <div style="background: rgba(108, 99, 255, 0.08); border: 1px solid rgba(108, 99, 255, 0.25); border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                        <span style="font-size: 1.2rem;">&#127891;</span>
+                        <h3 style="font-size: 0.95rem; font-weight: 700; color: #a78bfa; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">Campus & Event Profile</h3>
+                    </div>
+
+                    <!-- College & Enrollment No -->
+                    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <label for="college_name" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">College / University</label>
+                            <input type="text" id="college_name" name="college_name" value="{{ reg.college_name if reg and reg.college_name else 'A.D. Patel Institute of Technology (ADIT)' }}" required style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 0.9rem;">
+                        </div>
+                        <div>
+                            <label for="enrollment_no" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Enrollment / Roll No</label>
+                            <input type="text" id="enrollment_no" name="enrollment_no" value="{{ reg.enrollment_no if reg and reg.enrollment_no else '' }}" placeholder="e.g. 230010116001" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 0.9rem;">
+                        </div>
+                    </div>
+
+                    <!-- Course / Branch & Department -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <label for="course_enrolled" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Degree / Course</label>
+                            <input type="text" id="course_enrolled" name="course_enrolled" value="{{ reg.course_enrolled if reg and reg.course_enrolled else 'B.Tech Information Technology' }}" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 0.9rem;">
+                        </div>
+                        <div>
+                            <label for="department" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Department</label>
+                            <input type="text" id="department" name="department" value="{{ reg.department if reg and reg.department else 'Computer & IT Engineering' }}" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 0.9rem;">
+                        </div>
+                    </div>
+
+                    <!-- Primary Event Interests & Skills -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label for="primary_interests" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Event Interests (comma separated)</label>
+                            <input type="text" id="primary_interests" name="primary_interests" value="{{ reg.primary_interests if reg and reg.primary_interests else 'Hackathons, Workshops, Technical, AI & ML' }}" placeholder="Hackathons, Tech Talks..." style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 0.9rem;">
+                        </div>
+                        <div>
+                            <label for="skills" style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Skills / Specialization</label>
+                            <input type="text" id="skills" name="skills" value="{{ reg.skills if reg and reg.skills else 'Python, Web Development, Cloud' }}" placeholder="Python, Robotics, Photography..." style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 0.9rem;">
+                        </div>
                     </div>
                 </div>
 
@@ -204,7 +249,10 @@
                 <div style="font-size: 0.85rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.5rem;">
                     <div>Registered: <span style="color: #fff;">{{ student.created_at.strftime('%d %B %Y') }}</span></div>
                     <div>Last Login: <span style="color: #fff;">{{ student.last_login.strftime('%d %B %Y, %I:%M %p') if student.last_login else 'Active now' }}</span></div>
-                    <div>Admission Status: <span style="color: #a78bfa; font-weight: 600;">{{ reg.registration_status if reg else 'Draft' }}</span></div>
+                    <div>Campus Status: <span style="color: #a78bfa; font-weight: 600;">{{ reg.registration_status if reg else 'Draft' }}</span></div>
+                    {% if reg and reg.college_name %}
+                    <div>College: <span style="color: #34d399;">{{ reg.college_name }}</span></div>
+                    {% endif %}
                 </div>
             </div>
 

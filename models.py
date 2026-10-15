@@ -103,12 +103,16 @@ class StudentRegistration(db.Model):
     guardian_occupation = db.Column(db.String(100), nullable=True)
     family_income = db.Column(db.String(50), nullable=True)
 
-    # Academic & Admission Details
+    # Academic & College Details (EventLoop Campus Platform)
+    college_name = db.Column(db.String(150), default='ADIT - A.D. Patel Institute of Technology')
+    enrollment_no = db.Column(db.String(50), nullable=True) # e.g. 230010116001
     course_enrolled = db.Column(db.String(150), nullable=True) # e.g. B.Tech Computer Engineering
     department = db.Column(db.String(100), nullable=True)
     academic_year = db.Column(db.String(20), default='2026-2027')
     admission_category = db.Column(db.String(50), default='Merit') # Merit / ACPC, Management, NRI, TFWS
     semester = db.Column(db.String(20), default='1st Semester')
+    primary_interests = db.Column(db.String(200), nullable=True) # e.g. Hackathon, Workshop, Tech Talk
+    skills = db.Column(db.String(250), nullable=True) # e.g. Python, AI, Public Speaking
 
     # Prior Educational Qualifications
     tenth_board = db.Column(db.String(100), nullable=True)

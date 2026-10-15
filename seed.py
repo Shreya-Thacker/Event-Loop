@@ -191,6 +191,10 @@ def seed():
             phone_number='9876543210',
             alternate_phone='9876500000',
             email='student@adit.edu',
+            college_name='A.D. Patel Institute of Technology (ADIT)',
+            enrollment_no='230010116001',
+            primary_interests='Hackathons, Workshops, Technical, AI & ML',
+            skills='Python, Web Development, Cloud Computing, UI/UX',
             permanent_address='12, Shanti Niketan Society, Near Nana Bazar, V.V. Nagar',
             city='Anand',
             state='Gujarat',
@@ -232,6 +236,10 @@ def seed():
             category='General',
             phone_number='9876543211',
             email='rohit@adit.edu',
+            college_name='A.D. Patel Institute of Technology (ADIT)',
+            enrollment_no='230010116045',
+            primary_interests='Sports, Gaming, Social, Tech Talk',
+            skills='Cricket, Video Editing, Event Coordination',
             permanent_address='45, Sardar Patel Colony, Station Road',
             city='Nadiad',
             state='Gujarat',
@@ -268,49 +276,49 @@ def seed():
 
         sample_docs = [
             {
-                'type': '10th Standard Marksheet',
-                'filename': '10th_marksheet_shreya.pdf',
+                'type': 'College Student ID Card (Campus Pass Verification)',
+                'filename': 'college_student_id_shreya.pdf',
                 'size': 245.5,
                 'status': 'Verified',
-                'remarks': 'ACPC Verified and Approved'
+                'remarks': 'Official ADIT College Student ID Verified for Event Passes'
             },
             {
-                'type': '12th Standard Marksheet',
-                'filename': '12th_hsc_science_marksheet.pdf',
+                'type': 'Event Achievement / Participation Certificate',
+                'filename': 'hackathon_winner_cert.pdf',
                 'size': 312.0,
                 'status': 'Verified',
-                'remarks': 'Attested copy verified'
+                'remarks': '1st Runner Up Certificate - State Level Hackathon'
             },
             {
-                'type': 'Entrance Exam Scorecard (GUJCET / JEE)',
-                'filename': 'gujcet_2026_scorecard.pdf',
+                'type': 'College Permission Letter / Bonafide / NOC',
+                'filename': 'bonafide_noc_certificate.pdf',
                 'size': 188.4,
                 'status': 'Verified',
-                'remarks': 'Scorecard confirmed: 96.40 PR'
+                'remarks': 'HOD Permission Letter for On-Duty Inter-College Competitions'
             },
             {
-                'type': 'Aadhaar Card / Photo ID Proof',
+                'type': 'Government Identity Proof (Aadhaar / ID)',
                 'filename': 'aadhaar_card_scan.pdf',
                 'size': 420.2,
                 'status': 'Uploaded',
-                'remarks': 'Government Identity Verified'
+                'remarks': 'Government Identity Proof Verified'
             },
             {
-                'type': 'Passport Size Photograph',
-                'filename': 'passport_photo.png',
+                'type': 'Student Profile Photograph',
+                'filename': 'student_photo.png',
                 'size': 95.8,
                 'status': 'Verified',
-                'remarks': 'Clear color passport photograph'
+                'remarks': 'Official Student ID Photograph'
             }
         ]
 
         for s_doc in sample_docs:
             disk_filename = f"stu_{student1.id}_{s_doc['filename']}"
             disk_path = os.path.join(upload_dir, disk_filename)
-            # Create a mock placeholder file if not already present
+            # Create sample placeholder file if not already present
             if not os.path.exists(disk_path):
                 with open(disk_path, 'wb') as f:
-                    f.write(f"Sample Student Document: {s_doc['type']} for {reg1.full_name}".encode('utf-8'))
+                    f.write(f"EventLoop Student Document: {s_doc['type']} for {reg1.full_name} ({reg1.enrollment_no})".encode('utf-8'))
 
             doc_entry = DocumentTrack(
                 student_login_id=student1.id,

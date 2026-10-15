@@ -28,3 +28,7 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# ── Uploads ───────────────────────────────────────────────────────────────────
+static/uploads/documents/*
+!static/uploads/documents/.gitkeep

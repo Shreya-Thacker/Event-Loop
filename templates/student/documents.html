@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Upload Documents | Admission Document Track{% endblock %}
-{% block meta_description %}Upload, track, replace, and manage mandatory admission documents for college verification.{% endblock %}
+{% block title %}Upload Documents | Student Verification & Document Track{% endblock %}
+{% block meta_description %}Upload, track, and manage student verification documents for campus event participation and passes.{% endblock %}
 
 {% block content %}
 <div class="documents-container" style="max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem 4rem;">
@@ -9,18 +9,18 @@
     <div style="background: rgba(26, 26, 46, 0.7); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem 2rem; margin-bottom: 2rem; box-shadow: var(--shadow);">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
             <div>
-                <span class="hero-badge" style="margin-bottom: 0.5rem; display: inline-block;">&#128194; Admission Verification</span>
-                <h1 style="font-size: 1.8rem; font-weight: 700; color: #fff; margin: 0.2rem 0;">Upload Admission Documents</h1>
+                <span class="hero-badge" style="margin-bottom: 0.5rem; display: inline-block;">&#128194; EventLoop Student Verification</span>
+                <h1 style="font-size: 1.8rem; font-weight: 700; color: #fff; margin: 0.2rem 0;">Upload Student Documents</h1>
                 <p style="color: var(--text-muted); font-size: 0.95rem;">
-                    Document Track Record &mdash; Mandatory verification for <strong>{{ reg.full_name if reg else current_user.username }}</strong>
+                    Document Track Record &mdash; Verification for <strong>{{ reg.full_name if reg else current_user.username }}</strong>
                 </p>
             </div>
             <div>
                 <a href="{{ url_for('student.registration') }}" class="btn-nav btn-outline" style="margin-right: 0.5rem;">
-                    &larr; Registration Form
+                    &larr; Campus Form
                 </a>
                 <a href="{{ url_for('student.dashboard') }}" class="btn-nav btn-primary">
-                    Dashboard &rarr;
+                    Student Hub &rarr;
                 </a>
             </div>
         </div>
@@ -32,7 +32,7 @@
             {% set pct = [((uploaded_count / total_required) * 100)|round|int, 100]|min %}
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                 <span style="font-size: 0.9rem; font-weight: 600; color: var(--text);">
-                    Document Completion: {{ uploaded_count }} of {{ total_required }} mandatory items uploaded
+                    Verification Progress: {{ uploaded_count }} of {{ total_required }} campus documents tracked
                 </span>
                 <span style="font-weight: 700; color: var(--primary);">{{ pct }}%</span>
             </div>
@@ -50,7 +50,7 @@
             <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
                 <span style="font-size: 1.5rem;">&#128228;</span>
                 <div>
-                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff;">Upload New Document</h2>
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff;">Upload Document to Track Table</h2>
                     <p style="font-size: 0.85rem; color: var(--text-muted);">PDF, JPG, PNG, WEBP (Max 16 MB per document)</p>
                 </div>
             </div>
@@ -66,11 +66,10 @@
                         <option value="" style="background: #1a1a2e;">-- Select Document Type to Upload --</option>
                         {% for item in standard_docs %}
                             <option value="{{ item }}" {% if item in uploaded_types %}style="background: #1a1a2e; color: #75b798;"{% else %}style="background: #1a1a2e;"{% endif %}>
-                                {{ item }} {% if item in uploaded_types %}(Already Uploaded){% endif %}
+                                {{ item }} {% if item in uploaded_types %}(Already Tracked){% endif %}
                             </option>
                         {% endfor %}
-                        <option value="Caste / Category Certificate" style="background: #1a1a2e;">Caste / Category Certificate (If applicable)</option>
-                        <option value="Income Certificate" style="background: #1a1a2e;">Income Certificate (For TFWS/EWS)</option>
+                        <option value="Academic Marksheet / Transcript" style="background: #1a1a2e;">Academic Marksheet / Transcript</option>
                         <option value="Other Certificate" style="background: #1a1a2e;">Other Supporting Document</option>
                     </select>
                 </div>

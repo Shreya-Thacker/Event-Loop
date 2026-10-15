@@ -3,22 +3,22 @@
 
 {% block content %}
 
-<!-- ── Student Registration Portal Callout Banner ── -->
+<!-- ── Student Registration & Campus Pass Callout Banner ── -->
 <div style="max-width: 1100px; margin: 1.5rem auto 0; padding: 0 1rem;">
-    <div style="background: linear-gradient(135deg, rgba(108, 99, 255, 0.2), rgba(255, 101, 132, 0.15)), rgba(22, 33, 62, 0.85); backdrop-filter: blur(14px); border: 1px solid rgba(108, 99, 255, 0.4); border-radius: 16px; padding: 1.75rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.25rem; box-shadow: 0 12px 30px rgba(0,0,0,0.4);">
+    <div style="background: linear-gradient(135deg, rgba(108, 99, 255, 0.22), rgba(255, 101, 132, 0.15)), rgba(22, 33, 62, 0.85); backdrop-filter: blur(14px); border: 1px solid rgba(108, 99, 255, 0.4); border-radius: 16px; padding: 1.75rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.25rem; box-shadow: 0 12px 30px rgba(0,0,0,0.4);">
         <div style="display: flex; align-items: center; gap: 1.25rem;">
             <div style="width: 54px; height: 54px; border-radius: 12px; background: rgba(108, 99, 255, 0.25); border: 1px solid rgba(108, 99, 255, 0.5); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #fff;">
                 &#127891;
             </div>
             <div>
-                <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #a78bfa; font-weight: 700;">Admissions 2026-27 Open</div>
-                <h2 style="font-size: 1.35rem; font-weight: 700; color: #fff; margin: 0.1rem 0;">Newly Admitted Student Registration Portal</h2>
-                <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">Complete Sign-up &bull; Admission Form &bull; Document Tracking Table &bull; Profile Management</p>
+                <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #a78bfa; font-weight: 700;">Campus Event Pass &amp; Verification</div>
+                <h2 style="font-size: 1.35rem; font-weight: 700; color: #fff; margin: 0.1rem 0;">Student Registration &amp; Document Tracking Portal</h2>
+                <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">Complete Student Sign-up &bull; College Registration Form &bull; Document Tracking Table &bull; Profile Management</p>
             </div>
         </div>
         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
             {% if current_user.is_authenticated and current_user.is_student %}
-                <a href="{{ url_for('student.dashboard') }}" class="btn-nav btn-primary" style="padding: 0.65rem 1.25rem; font-weight: 600;">Open Student Portal &rarr;</a>
+                <a href="{{ url_for('student.dashboard') }}" class="btn-nav btn-primary" style="padding: 0.65rem 1.25rem; font-weight: 600;">Student Hub &rarr;</a>
                 <a href="{{ url_for('student.documents') }}" class="btn-nav btn-outline" style="padding: 0.65rem 1.25rem;">Document Track</a>
             {% else %}
                 <a href="{{ url_for('student.signup') }}" class="btn-nav btn-primary" style="padding: 0.65rem 1.25rem; font-weight: 600;">Student Sign-Up &rarr;</a>
